@@ -15,6 +15,7 @@ module FBCLI
     puts "Please open: #{uri}"
     puts
     puts "Waiting for authorization code on port #{PORT}..."
+    puts
 
     server = WEBrick::HTTPServer.new(
       :Port => PORT,
@@ -23,11 +24,13 @@ module FBCLI
       :AccessLog => []
     )
 
+    access_token = nil
+
     server.mount_proc '/' do |req, res|
       key, value = req.query_string.split '=', 2
 
       if key == "code"
-        $access_token = get_access_token(app_id, value, app_secret)
+        access_token = get_access_token(app_id, value, app_secret)
       else
         puts "Received unexpected request: #{req.query_string}"
         # TODO: Handle forseeable cases
@@ -37,9 +40,14 @@ module FBCLI
       server.shutdown
     end
 
+    # Allow CTRL+C intervention
     trap 'INT' do server.shutdown end
 
+    # This thread will block execution until server shuts down
     server.start
+
+    # Return access token
+    access_token
   end
 
   def self.get_access_token(app_id, auth_code, app_secret)
@@ -52,6 +60,6 @@ module FBCLI
     res = Net::HTTP.get_response(URI.parse(auth_uri))
     res = JSON.parse(res.body)
 
-    res["access_token"]
+    [res["access_token"], res["expires_in"]]
   end
 end

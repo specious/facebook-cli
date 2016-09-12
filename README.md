@@ -1,4 +1,4 @@
-Facebook command line utility
+Facebook command line interface
 
 ## Facebook configuration
 
@@ -16,6 +16,7 @@ bundle install
 
 ```
 bin/fbcli login
+bin/fbcli
 ```
 
 ## License
