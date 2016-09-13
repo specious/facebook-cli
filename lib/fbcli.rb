@@ -1,55 +1,71 @@
+require 'gli'
 require 'yaml'
 require 'koala'
+require 'optparse'
 require 'fbcli/auth'
 
 CONFIG_FILE = "config.yml"
 
-if ARGV[0] == "--help"
-  puts "Usage: #{$0} [login | <access_token>]"
-  exit
+include GLI::App
+
+program_desc "Facebook command line interface"
+
+flag [:token], :desc => 'Provide Facebook access token', :required => false
+
+pre do
+  $config = YAML.load_file(CONFIG_FILE)
 end
 
-$config = YAML.load_file(CONFIG_FILE)
+desc "Log into Facebook and receive an access token"
+command :login do |c|
+  c.action do
+    token, expiration = FBCLI::listen_for_auth_code($config['app_id'], $config['app_secret'])
 
-if ARGV[0] == "login"
-  token, expiration = FBCLI::listen_for_auth_code($config['app_id'], $config['app_secret'])
+    if not token.nil?
+      $config['access_token'] = token
 
-  if not token.nil?
-    $config['access_token'] = token
+      File.open(CONFIG_FILE,'w') do |f|
+        f.write $config.to_yaml
+      end
 
-    File.open(CONFIG_FILE,'w') do |f|
-      f.write $config.to_yaml
+      puts "Your access token: #{token}"
+      puts
+      puts "Expires in: #{Time.at(expiration).utc.strftime("%H:%M")} hours"
+      puts
+      puts "Have fun!"
+    end
+  end
+end
+
+desc "List the pages you have 'Liked'"
+command :likes do |c|
+  c.action do |global_options,options,args|
+    if not global_options[:token].nil?
+      $config['access_token'] = global_options[:token]
     end
 
-    puts "Your access token: #{$access_token}"
-    puts
-    puts "Expires in: #{Time.at(expiration).utc.strftime("%H:%M")} hours"
-    puts
-    puts "Have fun!"
+    if $config['access_token'].nil? or $config['access_token'].empty?
+      exit_now! "You must first acquire an access token; run: #{$0} login"
+    end
+
+    graph = Koala::Facebook::API.new($config['access_token'])
+
+    begin
+      likes = graph.get_connections("me", "likes")
+    rescue Koala::Facebook::APIError => e
+      exit_now! "Koala exception: #{e}"
+    end
+
+    while not likes.nil? do
+      likes.each { |like|
+        puts like["name"]
+        puts "https://www.facebook.com/#{like["id"]}/"
+        puts
+      }
+
+      likes = likes.next_page
+    end
   end
-
-  exit
 end
 
-if not ARGV[0].nil?
-  $config['access_token'] = ARGV[0]
-end
-
-graph = Koala::Facebook::API.new($config['access_token'])
-
-begin
-  likes = graph.get_connections("me", "likes")
-rescue Koala::Facebook::APIError => e
-  puts "Koala exception: #{e}"
-  exit
-end
-
-while not likes.nil? do
-  likes.each { |like|
-    puts like["name"]
-    puts "https://www.facebook.com/#{like["id"]}/"
-    puts
-  }
-
-  likes = likes.next_page
-end
+exit run(ARGV)

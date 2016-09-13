@@ -8,6 +8,8 @@ Facebook command line interface
 
 ## Setup
 
+Requires [Bundler](http://bundler.io/).
+
 ```
 bundle install
 ```
@@ -16,7 +18,7 @@ bundle install
 
 ```
 bin/fbcli login
-bin/fbcli
+bin/fbcli likes
 ```
 
 ## License
