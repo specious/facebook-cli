@@ -1,8 +1,7 @@
 require 'gli'
 require 'yaml'
-require 'koala'
-require 'optparse'
 require 'fbcli/auth'
+require 'fbcli/facebook'
 
 CONFIG_FILE = "config.yml"
 
@@ -40,30 +39,19 @@ end
 desc "List the pages you have 'Liked'"
 command :likes do |c|
   c.action do |global_options,options,args|
-    if not global_options[:token].nil?
-      $config['access_token'] = global_options[:token]
+    FBCLI::do_request global_options, "likes" do |item|
+      puts item["name"]
+      puts "https://www.facebook.com/#{item["id"]}/"
+      puts
     end
+  end
+end
 
-    if $config['access_token'].nil? or $config['access_token'].empty?
-      exit_now! "You must first acquire an access token; run: #{$0} login"
-    end
-
-    graph = Koala::Facebook::API.new($config['access_token'])
-
-    begin
-      likes = graph.get_connections("me", "likes")
-    rescue Koala::Facebook::APIError => e
-      exit_now! "Koala exception: #{e}"
-    end
-
-    while not likes.nil? do
-      likes.each { |like|
-        puts like["name"]
-        puts "https://www.facebook.com/#{like["id"]}/"
-        puts
-      }
-
-      likes = likes.next_page
+desc "List the people you are friends with (some limitations)"
+command :friends do |c|
+  c.action do |global_options,options,args|
+    FBCLI::do_request global_options, "invitable_friends" do |item|
+      puts item["name"]
     end
   end
 end
