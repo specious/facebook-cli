@@ -56,4 +56,25 @@ command :friends do |c|
   end
 end
 
+consumePhoto = Proc.new do |item|
+  puts item["name"] unless not item.key?("name")
+  puts "https://www.facebook.com/#{item["id"]}/"
+  puts "Created: #{Time.parse(item["created_time"]).httpdate}"
+  puts "--"
+end
+
+desc "List photos you have uploaded"
+command :photos do |c|
+  c.action do |global_options,options,args|
+    FBCLI::do_request global_options, "photos?type=uploaded", &consumePhoto
+  end
+end
+
+desc "List photos you are tagged in"
+command :photosof do |c|
+  c.action do |global_options,options,args|
+    FBCLI::do_request global_options, "photos", &consumePhoto
+  end
+end
+
 exit run(ARGV)
