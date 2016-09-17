@@ -11,16 +11,22 @@ module FBCLI
     end
   end
 
-  def self.do_request(global_options, cmd)
+  def self.request_data(global_options, cmd)
     ensure_access_token(global_options)
 
     graph = Koala::Facebook::API.new($config['access_token'])
 
     begin
-      items = graph.get_connections("me", cmd)
+      data = graph.get_connections("me", cmd)
     rescue Koala::Facebook::APIError => e
       exit_now! "Koala exception: #{e}"
     end
+
+    data
+  end
+
+  def self.page_items(global_options, cmd)
+    items = request_data(global_options, cmd)
 
     while not items.nil? do
       items.each { |item|

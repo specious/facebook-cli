@@ -36,10 +36,19 @@ command :login do |c|
   end
 end
 
+desc "Show your name and profile ID"
+command :me do |c|
+  c.action do |global_options,options,args|
+    data = FBCLI::request_data global_options, ""
+    puts "Name: #{data["name"]}"
+    puts "Your profile ID: #{data["id"]}"
+  end
+end
+
 desc "List the pages you have 'Liked'"
 command :likes do |c|
   c.action do |global_options,options,args|
-    FBCLI::do_request global_options, "likes" do |item|
+    FBCLI::page_items global_options, "likes" do |item|
       puts item["name"]
       puts "https://www.facebook.com/#{item["id"]}/"
       puts
@@ -57,7 +66,7 @@ long_desc <<~EOM
 EOM
 command :friends do |c|
   c.action do |global_options,options,args|
-    FBCLI::do_request global_options, "invitable_friends" do |item|
+    FBCLI::page_items global_options, "invitable_friends" do |item|
       puts item["name"]
     end
   end
@@ -66,7 +75,7 @@ end
 desc "List the posts on your profile"
 command :feed do |c|
   c.action do |global_options,options,args|
-    FBCLI::do_request global_options, "feed" do |item|
+    FBCLI::page_items global_options, "feed" do |item|
       profile_id, post_id = item["id"].split '_', 2
 
       puts item["message"]
@@ -87,14 +96,14 @@ end
 desc "List photos you have uploaded"
 command :photos do |c|
   c.action do |global_options,options,args|
-    FBCLI::do_request global_options, "photos?type=uploaded", &consumePhoto
+    FBCLI::page_items global_options, "photos?type=uploaded", &consumePhoto
   end
 end
 
 desc "List photos you are tagged in"
 command :photosof do |c|
   c.action do |global_options,options,args|
-    FBCLI::do_request global_options, "photos", &consumePhoto
+    FBCLI::page_items global_options, "photos", &consumePhoto
   end
 end
 
