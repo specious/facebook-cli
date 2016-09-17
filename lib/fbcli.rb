@@ -63,6 +63,20 @@ command :friends do |c|
   end
 end
 
+desc "List the posts on your profile"
+command :feed do |c|
+  c.action do |global_options,options,args|
+    FBCLI::do_request global_options, "feed" do |item|
+      profile_id, post_id = item["id"].split '_', 2
+
+      puts item["message"]
+      puts "https://www.facebook.com/#{profile_id}/posts/#{post_id}"
+      puts "Created: #{Time.parse(item["created_time"]).httpdate}"
+      puts "--"
+    end
+  end
+end
+
 consumePhoto = Proc.new do |item|
   puts item["name"] unless not item.key?("name")
   puts "https://www.facebook.com/#{item["id"]}/"

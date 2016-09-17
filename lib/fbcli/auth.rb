@@ -10,7 +10,7 @@ module FBCLI
   def self.listen_for_auth_code(app_id, app_secret)
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
       "&redirect_uri=http://localhost:#{PORT}/" +
-      "&scope=user_likes,user_friends,user_photos"
+      "&scope=user_likes,user_friends,user_photos,user_posts"
 
     puts "Please open: #{uri}"
     puts
