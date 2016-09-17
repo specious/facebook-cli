@@ -1,3 +1,5 @@
+# Facebook CLI
+
 Facebook command line interface
 
 ## Facebook configuration
@@ -19,6 +21,14 @@ bundle install
 ```
 bin/fbcli login
 bin/fbcli likes
+```
+
+## Commands
+
+Run:
+
+```
+bin/fbcli help
 ```
 
 ## License

@@ -48,6 +48,13 @@ command :likes do |c|
 end
 
 desc "List the people you are friends with (some limitations)"
+long_desc <<~EOM
+  As of Graph API v2.0 Facebook no longer provides access to your full friends list.
+  As an alternative, we now request 'invitable_friends' which only includes friends
+  you are allowed to invite to use your app.
+
+  See: https://developers.facebook.com/docs/apps/faq#faq_1694316010830088
+EOM
 command :friends do |c|
   c.action do |global_options,options,args|
     FBCLI::do_request global_options, "invitable_friends" do |item|
