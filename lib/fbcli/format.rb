@@ -18,11 +18,10 @@ module FBCLI
   def self.write(str = "", format = $format)
     str = "" if str.nil?
 
-    case format
-    when "html"
-      puts "  " + str + "<br>"
-    else
-      puts str
+    if format == "html"
+      str = "  " + str + "<br>"
     end
+
+    puts str.encode('utf-8')
   end
 end

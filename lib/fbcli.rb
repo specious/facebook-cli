@@ -19,7 +19,11 @@ pre do |global_options,command|
 
   if $format == "html" and command.name != :login
     puts <<~EOM
-      <html>
+      <!doctype html>
+      <html lang=en>
+      <head>
+        <meta charset=utf-8>
+      </head>
       <body>
     EOM
   end
