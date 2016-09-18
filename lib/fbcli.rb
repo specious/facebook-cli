@@ -1,6 +1,7 @@
 require 'gli'
 require 'yaml'
 require 'fbcli/auth'
+require 'fbcli/format'
 require 'fbcli/facebook'
 
 CONFIG_FILE = "config.yml"
@@ -10,9 +11,30 @@ include GLI::App
 program_desc "Facebook command line interface"
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
+flag [:format], :desc => 'Output format (values: text, html)', :default_value => "text"
 
-pre do
+pre do |global_options,command|
   $config = YAML.load_file(CONFIG_FILE)
+  $format = global_options[:format]
+
+  if $format == "html" and command.name != :login
+    puts <<~EOM
+      <html>
+      <body>
+    EOM
+  end
+
+  # Success
+  true
+end
+
+post do |global_options,command|
+  if $format == "html" and command.name != :login
+    puts <<~EOM
+      </body>
+      </html>
+    EOM
+  end
 end
 
 desc "Log into Facebook and receive an access token"
@@ -40,8 +62,8 @@ desc "Show your name and profile ID"
 command :me do |c|
   c.action do |global_options,options,args|
     data = FBCLI::request_data global_options, ""
-    puts "Name: #{data["name"]}"
-    puts "Your profile ID: #{data["id"]}"
+    FBCLI::write "Name: #{data["name"]}"
+    FBCLI::write "Your profile ID: #{data["id"]}"
   end
 end
 
@@ -49,9 +71,9 @@ desc "List the pages you have 'Liked'"
 command :likes do |c|
   c.action do |global_options,options,args|
     FBCLI::page_items global_options, "likes" do |item|
-      puts item["name"]
-      puts "https://www.facebook.com/#{item["id"]}/"
-      puts
+      FBCLI::write item["name"]
+      FBCLI::write FBCLI::link item["id"]
+      FBCLI::write
     end
   end
 end
@@ -67,7 +89,7 @@ EOM
 command :friends do |c|
   c.action do |global_options,options,args|
     FBCLI::page_items global_options, "invitable_friends" do |item|
-      puts item["name"]
+      FBCLI::write item["name"]
     end
   end
 end
@@ -78,19 +100,19 @@ command :feed do |c|
     FBCLI::page_items global_options, "feed" do |item|
       profile_id, post_id = item["id"].split '_', 2
 
-      puts item["message"]
-      puts "https://www.facebook.com/#{profile_id}/posts/#{post_id}"
-      puts "Created: #{Time.parse(item["created_time"]).httpdate}"
-      puts "--"
+      FBCLI::write item["message"] if item.has_key?("message")
+      FBCLI::write FBCLI::link "#{profile_id}/posts/#{post_id}"
+      FBCLI::write "Created: #{FBCLI::date(item["created_time"])}"
+      FBCLI::write "--"
     end
   end
 end
 
 consumePhoto = Proc.new do |item|
-  puts item["name"] unless not item.key?("name")
-  puts "https://www.facebook.com/#{item["id"]}/"
-  puts "Created: #{Time.parse(item["created_time"]).httpdate}"
-  puts "--"
+  FBCLI::write item["name"] unless not item.key?("name")
+  FBCLI::write FBCLI::link "#{item["id"]}"
+  FBCLI::write "Created: #{FBCLI::date(item["created_time"])}"
+  FBCLI::write "--"
 end
 
 desc "List photos you have uploaded"
