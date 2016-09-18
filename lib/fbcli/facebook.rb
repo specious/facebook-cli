@@ -1,7 +1,7 @@
 require 'koala'
 
 module FBCLI
-  def self.ensure_access_token(global_options)
+  def self.init_api(global_options)
     if not global_options[:token].nil?
       $config['access_token'] = global_options[:token]
     end
@@ -9,17 +9,20 @@ module FBCLI
     if $config['access_token'].nil? or $config['access_token'].empty?
       exit_now! "You must first acquire an access token; run: #{$0} login"
     end
+
+    Koala::Facebook::API.new($config['access_token'])
   end
 
   def self.request_data(global_options, cmd)
-    ensure_access_token(global_options)
-
-    graph = Koala::Facebook::API.new($config['access_token'])
+    api = init_api(global_options)
 
     begin
-      data = graph.get_connections("me", cmd)
+      data = api.get_connections("me", cmd)
     rescue Koala::Facebook::APIError => e
-      exit_now! "Koala exception: #{e}"
+      exit_now! \
+        "Koala #{e.fb_error_type} (code #{e.fb_error_code})" +
+        if not e.http_status.nil? then " HTTP status: #{e.http_status}" else "" end +
+        "\n  #{e.fb_error_message}"
     end
 
     data
