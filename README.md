@@ -10,7 +10,9 @@ Facebook command line interface
 
 ## Setup
 
-Requires [Bundler](http://bundler.io/).
+Requires:
+- Ruby 2.3 or later
+- [Bundler](http://bundler.io/).
 
 ```
 bundle install
