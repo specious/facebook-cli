@@ -65,8 +65,9 @@ end
 
 desc "Log into Facebook and receive an access token"
 command :login do |c|
-  c.action do
-    token, expiration = FBCLI::listen_for_auth_code($config['app_id'], $config['app_secret'])
+  c.flag [:port], :desc => 'Local TCP port to serve Facebook login redirect page', :default_value => '3333'
+  c.action do |global_options,options,args|
+    token, expiration = FBCLI::listen_for_auth_code(options['port'], $config['app_id'], $config['app_secret'])
 
     if not token.nil?
       $config['access_token'] = token

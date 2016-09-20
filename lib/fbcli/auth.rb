@@ -4,21 +4,20 @@ require 'webrick'
 require 'json'
 
 module FBCLI
-  PORT = 3333
   API_VERSION = "2.7"
 
-  def self.listen_for_auth_code(app_id, app_secret)
+  def self.listen_for_auth_code(port, app_id, app_secret)
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
-      "&redirect_uri=http://localhost:#{PORT}/" +
+      "&redirect_uri=http://localhost:#{port}/" +
       "&scope=user_likes,user_friends,user_photos,user_posts"
 
     puts "Please open: #{uri}"
     puts
-    puts "Waiting for authorization code on port #{PORT}..."
+    puts "Waiting for authorization code on port #{port}..."
     puts
 
     server = WEBrick::HTTPServer.new(
-      :Port => PORT,
+      :Port => port,
       :SSLEnable => false,
       :Logger => WEBrick::Log.new(File.open(File::NULL, 'w')),
       :AccessLog => []
@@ -30,7 +29,7 @@ module FBCLI
       key, value = req.query_string.split '=', 2
 
       if key == "code"
-        access_token = get_access_token(app_id, value, app_secret)
+        access_token = get_access_token(port, app_id, value, app_secret)
       else
         puts "Received unexpected request: #{req.query_string}"
         # TODO: Handle forseeable cases
@@ -50,10 +49,10 @@ module FBCLI
     access_token
   end
 
-  def self.get_access_token(app_id, auth_code, app_secret)
+  def self.get_access_token(port, app_id, auth_code, app_secret)
     auth_uri = "https://graph.facebook.com/v#{API_VERSION}/oauth/access_token?" +
       "client_id=#{app_id}" +
-      "&redirect_uri=http://localhost:#{PORT}/" +
+      "&redirect_uri=http://localhost:#{port}/" +
       "&client_secret=#{app_secret}" +
       "&code=#{auth_code}"
 
