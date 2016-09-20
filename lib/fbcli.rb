@@ -41,6 +41,13 @@ post do |global_options,command|
   end
 end
 
+on_error do |exception|
+  puts exception.message
+
+  # Suppress GLI's built-in error handling
+  false
+end
+
 desc "Log into Facebook and receive an access token"
 command :login do |c|
   c.action do
