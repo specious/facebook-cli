@@ -1,2 +1,3 @@
-app_id: <app-id>
-app_secret: <app-secret>
+---
+app_id: ~
+app_secret: ~

@@ -15,6 +15,21 @@ flag [:format], :desc => 'Output format (values: text, html)', :default_value =>
 
 pre do |global_options,command|
   $config = YAML.load_file(CONFIG_FILE)
+
+  if $config['app_id'].nil? or $config['app_secret'].nil?
+    exit_now! <<~EOM
+      It looks like you are running #{$0} for the first time.
+
+      The following steps are necessary to use the Facebook API:
+
+      - Create a new application at: https://developers.facebook.com/apps
+      - In the Settings tab, add "localhost" to the App Domains
+      - Save the App ID and App Secret in "config.yml"
+
+      After that, run: #{$0} login
+    EOM
+  end
+
   $format = global_options[:format]
 
   if $format == "html" and command.name != :login
