@@ -61,4 +61,10 @@ module FBCLI
 
     [res["access_token"], res["expires_in"]]
   end
+
+  def self.expiration_str(seconds)
+    h, m = seconds.divmod(60 * 3600)
+
+    "#{h} hours and #{m.div 3600} minutes"
+  end
 end

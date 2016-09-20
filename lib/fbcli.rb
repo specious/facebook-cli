@@ -78,7 +78,7 @@ command :login do |c|
 
       puts "Your access token: #{token}"
       puts
-      puts "Expires in: #{Time.at(expiration).utc.strftime("%H:%M")} hours"
+      puts "Expires in: #{FBCLI::expiration_str(expiration.to_i)}"
       puts
       puts "Have fun!"
     end
