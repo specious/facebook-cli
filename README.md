@@ -2,27 +2,27 @@
 
 Facebook command line interface
 
+## Install
+
+```
+gem install facebook-cli
+```
+
+Requires Ruby 2.3 or later.
+
 ## Facebook configuration
+
+The following steps are necessary to use the Facebook API:
 
 - Create a new application at: https://developers.facebook.com/apps
 - In the Settings tab, add `localhost` to the App Domains
 - Save the App ID and App Secret in `config.yml`
 
-## Setup
-
-Requires:
-- Ruby 2.3 or later
-- [Bundler](http://bundler.io/).
-
-```
-bundle install
-```
-
 ## Run
 
 ```
-bin/fbcli login
-bin/fbcli likes
+facebook-cli login
+facebook-cli likes
 ```
 
 ## Commands
@@ -30,7 +30,7 @@ bin/fbcli likes
 Run:
 
 ```
-bin/fbcli help
+facebook-cli help
 ```
 
 ## License

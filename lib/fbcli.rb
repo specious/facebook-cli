@@ -10,6 +10,8 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
+version '1.0.0'
+
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:format], :desc => 'Output format (values: text, html)', :default_value => "text"
 
