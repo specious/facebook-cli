@@ -1,7 +1,7 @@
 module FBCLI
   # Facebook returns dates in ISO 8601 format
   def self.date(fb_date)
-    Time.parse(fb_date).httpdate
+    Time.parse(fb_date).localtime.rfc2822
   end
 
   def self.link(path, format = $format)

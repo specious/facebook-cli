@@ -11,7 +11,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.1.0'
+version '1.2.0'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:format], :desc => 'Output format (values: text, html)', :default_value => "text"
@@ -44,7 +44,9 @@ formattable_commands = [
   :feed,
   :friends,
   :photos,
-  :photosof
+  :photosof,
+  :events,
+  :pastevents
 ]
 
 def save_config
@@ -205,6 +207,47 @@ desc "List photos you are tagged in"
 command :photosof do |c|
   c.action do |global_options,options,args|
     FBCLI::page_items global_options, "photos", &consumePhoto
+  end
+end
+
+def list_events(global_options, past = false)
+  now = Time.new
+
+  FBCLI::page_items global_options, "events" do |item|
+    starts = Time.parse(item['start_time'])
+
+    if (past and starts < now) ^ (not past and starts > now)
+      unless item['end_time'].nil?
+        ends = Time.parse(item['end_time'])
+        duration = ends - starts
+      end
+
+      FBCLI::write "#{item['name']} (#{item['id']})"
+      FBCLI::write
+      FBCLI::write "Location: #{item['place']['name']}" unless item['place'].nil?
+      FBCLI::write "Date: #{FBCLI::date(item['start_time'])}"
+      FBCLI::write "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
+      FBCLI::write "RSVP: #{item['rsvp_status'].sub(/unsure/, 'maybe')}"
+      FBCLI::write
+      FBCLI::write FBCLI::link "events/#{item['id']}"
+      FBCLI::write
+      FBCLI::write item['description']
+      FBCLI::write "---------------------------------"
+    end
+  end
+end
+
+desc "List your upcoming events"
+command :events do |c|
+  c.action do |global_options,options,args|
+    list_events global_options
+  end
+end
+
+desc "List your past events"
+command :pastevents do |c|
+  c.action do |global_options,options,args|
+    list_events global_options, true
   end
 end
 
