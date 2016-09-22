@@ -16,7 +16,7 @@ The following steps are necessary to use the Facebook API:
 
 - Create a new application at: https://developers.facebook.com/apps
 - In the Settings tab, add `localhost` to the App Domains
-- Save the App ID and App Secret in `config.yml`
+- Save the App ID and App Secret by running: `facebook-cli config --appid=<app-id> --appsecret=<app-secret>`
 
 ## Run
 

@@ -4,37 +4,20 @@ require 'fbcli/auth'
 require 'fbcli/format'
 require 'fbcli/facebook'
 
-CONFIG_FILE = "config.yml"
+APP_NAME = File.split($0)[1]
+CONFIG_FILE = File.join(ENV['HOME'], ".#{APP_NAME}rc")
 
 include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.0.0'
+version '1.1.0'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:format], :desc => 'Output format (values: text, html)', :default_value => "text"
 
-pre do |global_options,command|
-  $config = YAML.load_file(CONFIG_FILE)
-
-  if $config['app_id'].nil? or $config['app_secret'].nil?
-    exit_now! <<~EOM
-      It looks like you are running #{$0} for the first time.
-
-      The following steps are necessary to use the Facebook API:
-
-      - Create a new application at: https://developers.facebook.com/apps
-      - In the Settings tab, add "localhost" to the App Domains
-      - Save the App ID and App Secret in "config.yml"
-
-      After that, run: #{$0} login
-    EOM
-  end
-
-  $format = global_options[:format]
-
-  if $format == "html" and command.name != :login
+def print_header
+  if $format == 'html'
     puts <<~EOM
       <!doctype html>
       <html lang=en>
@@ -44,17 +27,70 @@ pre do |global_options,command|
       <body>
     EOM
   end
+end
+
+def print_footer
+  if $format == 'html'
+    puts <<~EOM
+      </body>
+      </html>
+    EOM
+  end
+end
+
+formattable_commands = [
+  :me,
+  :likes,
+  :feed,
+  :friends,
+  :photos,
+  :photosof
+]
+
+def save_config
+  File.open(CONFIG_FILE, 'w') do |f|
+    f.write $config.to_yaml
+  end
+end
+
+pre do |global_options,command|
+  if command.name == :config
+    $config = {}
+  else
+    begin
+      $config = YAML.load_file(CONFIG_FILE)
+    rescue
+      exit_now! <<~EOM
+        It looks like you are running #{APP_NAME} for the first time.
+
+        The following steps are necessary to use the Facebook API:
+
+        - Create a new application at: https://developers.facebook.com/apps
+        - In the Settings tab, add "localhost" to the App Domains
+        - Save the App ID and App Secret by running:
+
+            #{APP_NAME} config --appid=<app-id> --appsecret=<app-secret>
+
+        After that, acquire an access token by running:
+
+            #{APP_NAME} login
+      EOM
+    end
+  end
+
+  $format = global_options[:format]
+
+  if formattable_commands.include?(command.name)
+    print_header
+  end
 
   # Success
   true
 end
 
 post do |global_options,command|
-  if $format == "html" and command.name != :login
-    puts <<~EOM
-      </body>
-      </html>
-    EOM
+  if formattable_commands.include?(command.name)
+    print_footer
   end
 end
 
@@ -63,6 +99,22 @@ on_error do |exception|
 
   # Suppress GLI's built-in error handling
   false
+end
+
+desc "Save Facebook application ID and secret"
+command :config do |c|
+  c.flag [:appid], :desc => 'Facebook application ID'
+  c.flag [:appsecret], :desc => 'Facebook application secret'
+  c.action do |global_options,options,args|
+    $config['app_id'] = options['appid'].to_i
+    $config['app_secret'] = options['appsecret']
+
+    save_config
+
+    puts "Configuration saved to #{CONFIG_FILE}"
+    puts
+    puts "To acquire a Facebook access token, run: #{APP_NAME} login"
+  end
 end
 
 desc "Log into Facebook and receive an access token"
@@ -74,9 +126,7 @@ command :login do |c|
     if not token.nil?
       $config['access_token'] = token
 
-      File.open(CONFIG_FILE,'w') do |f|
-        f.write $config.to_yaml
-      end
+      save_config
 
       puts "Your access token: #{token}"
       puts

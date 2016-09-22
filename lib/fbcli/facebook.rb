@@ -2,12 +2,13 @@ require 'koala'
 
 module FBCLI
   def self.init_api(global_options)
+    # Access token passed from the command line takes precedence
     if not global_options[:token].nil?
       $config['access_token'] = global_options[:token]
     end
 
     if $config['access_token'].nil? or $config['access_token'].empty?
-      exit_now! "You must first acquire an access token; run: #{$0} login"
+      exit_now! "You must first acquire an access token; run: #{APP_NAME} login"
     end
 
     Koala::Facebook::API.new($config['access_token'])
