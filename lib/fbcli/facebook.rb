@@ -34,10 +34,11 @@ module FBCLI
 
     while not items.nil? do
       items.each_with_index { |item, idx|
-        yield item
-
-        unless separator.nil? or idx == items.size - 1
-          puts separator
+        # Let a return value from an item processing block indicate omittance
+        if (yield item).nil?
+          unless separator.nil? or idx == items.size - 1
+            puts separator
+          end
         end
       }
 

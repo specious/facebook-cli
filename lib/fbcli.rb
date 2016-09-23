@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.0'
+version '1.3.1'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 
@@ -191,6 +191,9 @@ def list_events(global_options, past = false)
       puts link "events/#{item['id']}"
       puts
       puts item['description']
+    else
+      # Indicate that this item should be omitted from the output
+      false
     end
   end
 end
