@@ -27,11 +27,24 @@ facebook-cli likes
 
 ## Commands
 
-Run:
+Running ```facebook-cli help``` shows the list of available commands:
 
 ```
-facebook-cli help
+COMMANDS
+    config     - Save Facebook application ID and secret
+    events     - List your upcoming events
+    feed       - List the posts on your profile
+    friends    - List the people you are friends with (some limitations)
+    help       - Shows a list of commands or help for one command
+    likes      - List the pages you have 'Liked'
+    login      - Log into Facebook and receive an access token
+    me         - Show your name and profile ID
+    pastevents - List your past events
+    photos     - List photos you have uploaded
+    photosof   - List photos you are tagged in
 ```
+
+Running ```facebook-cli help <command>``` may reveal more details.
 
 ## Converting output to HTML
 
