@@ -29,12 +29,16 @@ module FBCLI
     data
   end
 
-  def self.page_items(global_options, cmd)
+  def self.page_items(global_options, cmd, separator = nil)
     items = request_data(global_options, cmd)
 
     while not items.nil? do
-      items.each { |item|
+      items.each_with_index { |item, idx|
         yield item
+
+        unless separator.nil? or idx == items.size - 1
+          puts separator
+        end
       }
 
       items = items.next_page

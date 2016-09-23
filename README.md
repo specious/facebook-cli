@@ -33,6 +33,14 @@ Run:
 facebook-cli help
 ```
 
+## Converting output to HTML
+
+The output can easily be converted to an HTML document using a Markdown renderer.  For example, with [Pandoc](http://pandoc.org/):
+
+```
+facebook-cli likes | pandoc -s -f markdown_github > likes.html
+```
+
 ## License
 
 MIT

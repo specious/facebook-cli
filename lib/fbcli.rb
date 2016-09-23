@@ -1,7 +1,6 @@
 require 'gli'
 require 'yaml'
 require 'fbcli/auth'
-require 'fbcli/format'
 require 'fbcli/facebook'
 
 APP_NAME = File.split($0)[1]
@@ -11,43 +10,18 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.2.0'
+version '1.3.0'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
-flag [:format], :desc => 'Output format (values: text, html)', :default_value => "text"
 
-def print_header
-  if $format == 'html'
-    puts <<~EOM
-      <!doctype html>
-      <html lang=en>
-      <head>
-        <meta charset=utf-8>
-      </head>
-      <body>
-    EOM
-  end
+def link(path)
+  "https://www.facebook.com/#{path}"
 end
 
-def print_footer
-  if $format == 'html'
-    puts <<~EOM
-      </body>
-      </html>
-    EOM
-  end
+# Facebook returns dates in ISO 8601 format
+def date_str(fb_date)
+  Time.parse(fb_date).localtime.rfc2822
 end
-
-formattable_commands = [
-  :me,
-  :likes,
-  :feed,
-  :friends,
-  :photos,
-  :photosof,
-  :events,
-  :pastevents
-]
 
 def save_config
   File.open(CONFIG_FILE, 'w') do |f|
@@ -80,20 +54,8 @@ pre do |global_options,command|
     end
   end
 
-  $format = global_options[:format]
-
-  if formattable_commands.include?(command.name)
-    print_header
-  end
-
   # Success
   true
-end
-
-post do |global_options,command|
-  if formattable_commands.include?(command.name)
-    print_footer
-  end
 end
 
 on_error do |exception|
@@ -105,8 +67,8 @@ end
 
 desc "Save Facebook application ID and secret"
 command :config do |c|
-  c.flag [:appid], :desc => 'Facebook application ID'
-  c.flag [:appsecret], :desc => 'Facebook application secret'
+  c.flag [:appid], :desc => 'Facebook application ID', :required => true
+  c.flag [:appsecret], :desc => 'Facebook application secret', :required => true
   c.action do |global_options,options,args|
     $config['app_id'] = options['appid'].to_i
     $config['app_secret'] = options['appsecret']
@@ -143,18 +105,17 @@ desc "Show your name and profile ID"
 command :me do |c|
   c.action do |global_options,options,args|
     data = FBCLI::request_data global_options, ""
-    FBCLI::write "Name: #{data["name"]}"
-    FBCLI::write "Your profile ID: #{data["id"]}"
+    puts "Name: #{data["name"]}"
+    puts "Your profile ID: #{data["id"]}"
   end
 end
 
 desc "List the pages you have 'Liked'"
 command :likes do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "likes" do |item|
-      FBCLI::write item["name"]
-      FBCLI::write FBCLI::link item["id"]
-      FBCLI::write
+    FBCLI::page_items global_options, 'likes', '' do |item|
+      puts item["name"]
+      puts link item["id"]
     end
   end
 end
@@ -169,8 +130,8 @@ long_desc <<~EOM
 EOM
 command :friends do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "invitable_friends" do |item|
-      FBCLI::write item["name"]
+    FBCLI::page_items global_options, 'invitable_friends' do |item|
+      puts item['name']
     end
   end
 end
@@ -178,42 +139,40 @@ end
 desc "List the posts on your profile"
 command :feed do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "feed" do |item|
+    FBCLI::page_items global_options, "feed", '- - -' do |item|
       profile_id, post_id = item["id"].split '_', 2
 
-      FBCLI::write item["message"] if item.has_key?("message")
-      FBCLI::write FBCLI::link "#{profile_id}/posts/#{post_id}"
-      FBCLI::write "Created: #{FBCLI::date(item["created_time"])}"
-      FBCLI::write "--"
+      puts item["message"] if item.has_key?("message")
+      puts link "#{profile_id}/posts/#{post_id}"
+      puts "Created: #{date_str(item["created_time"])}"
     end
   end
 end
 
 consumePhoto = Proc.new do |item|
-  FBCLI::write item["name"] unless not item.key?("name")
-  FBCLI::write FBCLI::link "#{item["id"]}"
-  FBCLI::write "Created: #{FBCLI::date(item["created_time"])}"
-  FBCLI::write "--"
+  puts item["name"] unless not item.key?("name")
+  puts link "#{item["id"]}"
+  puts "Created: #{date_str(item["created_time"])}"
 end
 
 desc "List photos you have uploaded"
 command :photos do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "photos?type=uploaded", &consumePhoto
+    FBCLI::page_items global_options, "photos?type=uploaded", '- - -', &consumePhoto
   end
 end
 
 desc "List photos you are tagged in"
 command :photosof do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "photos", &consumePhoto
+    FBCLI::page_items global_options, "photos", '- - -', &consumePhoto
   end
 end
 
 def list_events(global_options, past = false)
   now = Time.new
 
-  FBCLI::page_items global_options, "events" do |item|
+  FBCLI::page_items global_options, "events", "\n- - -\n\n" do |item|
     starts = Time.parse(item['start_time'])
 
     if (past and starts < now) ^ (not past and starts > now)
@@ -222,17 +181,16 @@ def list_events(global_options, past = false)
         duration = ends - starts
       end
 
-      FBCLI::write "#{item['name']} (#{item['id']})"
-      FBCLI::write
-      FBCLI::write "Location: #{item['place']['name']}" unless item['place'].nil?
-      FBCLI::write "Date: #{FBCLI::date(item['start_time'])}"
-      FBCLI::write "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
-      FBCLI::write "RSVP: #{item['rsvp_status'].sub(/unsure/, 'maybe')}"
-      FBCLI::write
-      FBCLI::write FBCLI::link "events/#{item['id']}"
-      FBCLI::write
-      FBCLI::write item['description']
-      FBCLI::write "---------------------------------"
+      puts "#{item['name']} (#{item['id']})"
+      puts
+      puts "Location: #{item['place']['name']}" unless item['place'].nil?
+      puts "Date: #{date_str(item['start_time'])}"
+      puts "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
+      puts "RSVP: #{item['rsvp_status'].sub(/unsure/, 'maybe')}"
+      puts
+      puts link "events/#{item['id']}"
+      puts
+      puts item['description']
     end
   end
 end
