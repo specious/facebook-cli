@@ -1,6 +1,8 @@
 require 'koala'
 
 module FBCLI
+  @@api = nil
+
   def self.init_api(global_options)
     # Access token passed from the command line takes precedence
     if not global_options[:token].nil?
@@ -14,11 +16,23 @@ module FBCLI
     Koala::Facebook::API.new($config['access_token'])
   end
 
-  def self.request_data(global_options, cmd)
-    api = init_api(global_options)
+  def self.request_object(global_options, id, options = {})
+    if @@api.nil?
+      @@api = init_api(global_options)
+    end
+
+    @@api.get_object(id, options) do |data|
+      yield data
+    end
+  end
+
+  def self.request_personal_connections(global_options, cmd)
+    if @@api.nil?
+      @@api = init_api(global_options)
+    end
 
     begin
-      data = api.get_connections("me", cmd)
+      data = @@api.get_connections("me", cmd)
     rescue Koala::Facebook::APIError => e
       exit_now! \
         "Koala #{e.fb_error_type} (code #{e.fb_error_code})" +
@@ -30,7 +44,7 @@ module FBCLI
   end
 
   def self.page_items(global_options, cmd, separator = nil, filter = nil)
-    items = request_data(global_options, cmd)
+    items = request_personal_connections(global_options, cmd)
 
     virgin = true
 

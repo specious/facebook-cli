@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.2'
+version '1.3.3'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 
@@ -207,6 +207,49 @@ desc "List your past events"
 command :pastevents do |c|
   c.action do |global_options,options,args|
     list_events global_options, true
+  end
+end
+
+desc "Show event details"
+arg_name "[ids...]"
+command :event do |c|
+  c.action do |global_options,options,args|
+    args.each_with_index do |id, index|
+      FBCLI::request_object(
+        global_options,
+        id,
+        :fields => 'name,description,place,owner,start_time,end_time,attending_count,interested_count,declined_count,maybe_count,is_canceled'
+      ) do |item|
+        starts = Time.parse(item['start_time'])
+
+        unless item['end_time'].nil?
+          ends = Time.parse(item['end_time'])
+          duration = ends - starts
+        end
+
+        puts "#{item['name']} (#{item['id']})"
+
+        puts
+        puts "Location: #{item['place']['name']}" unless item['place'].nil?
+        puts "Date: #{date_str(item['start_time'])}" + (item['is_canceled'] ? " [CANCELED]" : "")
+        puts "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
+        puts "Created by: #{item['owner']['name']}"
+        puts
+        puts "Attending: #{item['attending_count']}"
+        puts "Interested: #{item['interested_count']}"
+        puts "Maybe: #{item['maybe_count']}"
+        puts "Declined: #{item['declined_count']}"
+        puts
+        puts link "events/#{item['id']}"
+
+        if not item['description'].empty?
+          puts
+          puts item['description']
+        end
+
+        puts "- - -" unless index == args.size - 1
+      end
+    end
   end
 end
 
