@@ -29,16 +29,21 @@ module FBCLI
     data
   end
 
-  def self.page_items(global_options, cmd, separator = nil)
+  def self.page_items(global_options, cmd, separator = nil, filter = nil)
     items = request_data(global_options, cmd)
+
+    virgin = true
 
     while not items.nil? do
       items.each_with_index { |item, idx|
-        # Let a return value from an item processing block indicate omittance
-        if (yield item).nil?
-          unless separator.nil? or idx == items.size - 1
+        if filter.nil? or not filter.call(item)
+          unless separator.nil? or virgin
             puts separator
           end
+
+          yield item
+
+          virgin = false
         end
       }
 

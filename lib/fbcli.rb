@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.1'
+version '1.3.2'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 
@@ -172,29 +172,27 @@ end
 def list_events(global_options, past = false)
   now = Time.new
 
-  FBCLI::page_items global_options, "events", "\n- - -\n\n" do |item|
+  filter = lambda { |item|
+    starts = Time.parse(item['start_time'])
+    not ((past and starts < now) ^ (not past and starts > now))
+  }
+
+  FBCLI::page_items global_options, "events", '- - -', filter do |item|
     starts = Time.parse(item['start_time'])
 
-    if (past and starts < now) ^ (not past and starts > now)
-      unless item['end_time'].nil?
-        ends = Time.parse(item['end_time'])
-        duration = ends - starts
-      end
-
-      puts "#{item['name']} (#{item['id']})"
-      puts
-      puts "Location: #{item['place']['name']}" unless item['place'].nil?
-      puts "Date: #{date_str(item['start_time'])}"
-      puts "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
-      puts "RSVP: #{item['rsvp_status'].sub(/unsure/, 'maybe')}"
-      puts
-      puts link "events/#{item['id']}"
-      puts
-      puts item['description']
-    else
-      # Indicate that this item should be omitted from the output
-      false
+    unless item['end_time'].nil?
+      ends = Time.parse(item['end_time'])
+      duration = ends - starts
     end
+
+    puts "#{item['name']} (#{item['id']})"
+    puts
+    puts "Location: #{item['place']['name']}" unless item['place'].nil?
+    puts "Date: #{date_str(item['start_time'])}"
+    puts "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
+    puts "RSVP: #{item['rsvp_status'].sub(/unsure/, 'maybe')}"
+    puts
+    puts link "events/#{item['id']}"
   end
 end
 
