@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'facebook-cli'
-  s.version       = '1.3.3'
+  s.version       = '1.3.4'
   s.licenses      = ['MIT']
   s.summary       = 'Facebook command line utility'
   s.description   = 'A limited command line interface to the Facebook Graph API'

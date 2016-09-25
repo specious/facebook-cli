@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.3'
+version '1.3.4'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 
@@ -104,9 +104,10 @@ end
 desc "Show your name and profile ID"
 command :me do |c|
   c.action do |global_options,options,args|
-    data = FBCLI::request_data global_options, ""
-    puts "Name: #{data["name"]}"
-    puts "Your profile ID: #{data["id"]}"
+    FBCLI::request_object global_options, "me" do |data|
+      puts "Name: #{data["name"]}"
+      puts "ID: #{data["id"]}"
+    end
   end
 end
 
