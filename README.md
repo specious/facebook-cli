@@ -2,6 +2,10 @@
 
 Facebook command line interface
 
+## Demo
+
+<a href="https://asciinema.org/a/87129"><img src="https://asciinema.org/a/87129.png" width="400"/></a>
+
 ## Install
 
 ```
