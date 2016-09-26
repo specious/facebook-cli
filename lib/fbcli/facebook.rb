@@ -47,8 +47,9 @@ module FBCLI
     items = request_personal_connections(global_options, cmd)
 
     virgin = true
+    count = 0
 
-    while not items.nil? do
+    while not (items.nil? or count == global_options['pages'].to_i) do
       items.each_with_index { |item, idx|
         if filter.nil? or not filter.call(item)
           unless separator.nil? or virgin
@@ -61,6 +62,7 @@ module FBCLI
         end
       }
 
+      count += 1
       items = items.next_page
     end
   end

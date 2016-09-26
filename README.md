@@ -32,6 +32,7 @@ Running ```facebook-cli help``` shows the list of available commands:
 ```
 COMMANDS
     config     - Save Facebook application ID and secret
+    event      - Show event details
     events     - List your upcoming events
     feed       - List the posts on your profile
     friends    - List the people you are friends with (some limitations)
