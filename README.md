@@ -47,6 +47,7 @@ COMMANDS
     pastevents - List your past events
     photos     - List photos you have uploaded
     photosof   - List photos you are tagged in
+    post       - Post to your timeline
 ```
 
 Running ```facebook-cli help <command>``` may reveal more details.

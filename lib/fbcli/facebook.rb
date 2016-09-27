@@ -78,4 +78,18 @@ module FBCLI
       items = items.next_page
     end
   end
+
+  def self.write_post(global_options, msg)
+    if @@api.nil?
+      @@api = init_api(global_options)
+    end
+
+    begin
+      profile_id, post_id = @@api.put_wall_post(msg)['id'].split '_', 2
+    rescue Koala::Facebook::APIError => e
+      exit_now! koala_error_str e
+    end
+
+    [profile_id, post_id]
+  end
 end

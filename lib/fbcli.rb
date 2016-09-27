@@ -10,13 +10,17 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.6'
+version '1.3.7'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
 
 def link(path)
   "https://www.facebook.com/#{path}"
+end
+
+def link_to_post(profile_id, post_id)
+  link "#{profile_id}/posts/#{post_id}"
 end
 
 # Facebook returns dates in ISO 8601 format
@@ -112,6 +116,15 @@ command :me do |c|
   end
 end
 
+desc "Post to your timeline"
+arg_name "message"
+command :post do |c|
+  c.action do |global_options,options,args|
+    profile_id, post_id = FBCLI::write_post global_options, args[0]
+    puts "Your post: #{link_to_post profile_id, post_id}"
+  end
+end
+
 desc "List the pages you have 'Liked'"
 command :likes do |c|
   c.action do |global_options,options,args|
@@ -145,7 +158,7 @@ command :feed do |c|
       profile_id, post_id = item["id"].split '_', 2
 
       puts item["message"] if item.has_key?("message")
-      puts link "#{profile_id}/posts/#{post_id}"
+      puts link_to_post profile_id, post_id
       puts "Created: #{date_str(item["created_time"])}"
     end
   end
