@@ -16,13 +16,28 @@ module FBCLI
     Koala::Facebook::API.new($config['access_token'])
   end
 
+  def self.koala_error_str(e)
+    str = "Koala #{e.fb_error_type}"
+    str << " (code #{e.fb_error_code.to_s +
+             (e.fb_error_subcode.nil? ? "" : ", subcode: " + e.fb_error_subcode.to_s)})"
+    str << " HTTP status: #{e.http_status}" unless e.http_status.nil?
+    str << "\n  #{e.fb_error_user_msg.nil? ? e.fb_error_message : e.fb_error_user_msg}"
+    str << " (FB trace id: #{e.fb_error_trace_id})"
+
+    str
+  end
+
   def self.request_object(global_options, id, options = {})
     if @@api.nil?
       @@api = init_api(global_options)
     end
 
-    @@api.get_object(id, options) do |data|
-      yield data
+    begin
+      @@api.get_object(id, options) do |data|
+        yield data
+      end
+    rescue Koala::Facebook::APIError => e
+      exit_now! koala_error_str e
     end
   end
 
@@ -34,10 +49,7 @@ module FBCLI
     begin
       data = @@api.get_connections("me", cmd)
     rescue Koala::Facebook::APIError => e
-      exit_now! \
-        "Koala #{e.fb_error_type} (code #{e.fb_error_code})" +
-        if not e.http_status.nil? then " HTTP status: #{e.http_status}" else "" end +
-        "\n  #{e.fb_error_message}"
+      exit_now! koala_error_str e
     end
 
     data
