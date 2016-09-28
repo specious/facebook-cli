@@ -62,6 +62,18 @@ The output can easily be converted to an HTML document using a Markdown renderer
 facebook-cli likes | pandoc -s -f markdown_github > likes.html
 ```
 
+## Why can't I...?
+
+Facebook has removed a large portion of their Graph API starting with version 2.0. [Niraj Shah](https://github.com/niraj-shah) has done a fantastic job documenting the cutbacks and their implications in these blog posts:
+
+* [Facebook API: Graph API v2.4 Released, Removes Groups, Notifications and Stream Permissions](https://www.webniraj.com/2015/07/14/facebook-api-graph-api-v2-4-released-removes-groups-notifications-and-stream-permissions/)
+* [Facebook Announces Graph API v2.3, More Deprecations](https://www.webniraj.com/2015/03/26/facebook-announces-graph-api-v2-3-more-deprecations/)
+* [Facebook API: Getting Friends Using Graph API 2.0 and PHP SDK 4.0.x](https://www.webniraj.com/2014/06/12/facebook-api-getting-friends-using-graph-api-2-0-and-php-sdk-4-0-x/)
+
+With so much functionality removed, it's not possible to build a full-featured interface to Facebook using the API.
+
+If you can get a feature to work, open a pull request.
+
 ## License
 
 MIT
