@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.10'
+version '1.3.11'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -120,8 +120,14 @@ end
 desc "Post to your timeline"
 arg_name "message"
 command :post do |c|
+  c.flag [:photo], :desc => 'File or URL of picture to post'
   c.action do |global_options,options,args|
-    profile_id, post_id = FBCLI::write_post global_options, args[0]
+    if options['photo'].nil?
+      profile_id, post_id = FBCLI::publish_post global_options, args[0]
+    else
+      profile_id, post_id = FBCLI::publish_photo global_options, args[0], options['photo']
+    end
+
     puts "Your post: #{link_to_post profile_id, post_id}"
   end
 end
