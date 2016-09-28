@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.8'
+version '1.3.9'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -138,14 +138,14 @@ end
 desc "List the people you are friends with (some limitations)"
 long_desc <<~EOM
   As of Graph API v2.0 Facebook no longer provides access to your full friends list.
-  As an alternative, we now request 'invitable_friends' which only includes friends
-  you are allowed to invite to use your app.
+  As an alternative, we now request 'taggable_friends' which only includes friends
+  you are allowed to tag.
 
   See: https://developers.facebook.com/docs/apps/faq#faq_1694316010830088
 EOM
 command :friends do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, 'invitable_friends' do |item|
+    FBCLI::page_items global_options, 'taggable_friends' do |item|
       puts item['name']
     end
   end
