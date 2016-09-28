@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.9'
+version '1.3.10'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -47,7 +47,8 @@ pre do |global_options,command|
         The following steps are necessary to use the Facebook API:
 
         - Create a new application at: https://developers.facebook.com/apps
-        - In the Settings tab, add "localhost" to the App Domains
+        - In the Settings tab, set "Site URL" to "http://localhost" and
+          then under "App Domains" add "localhost", and click "Save"
         - Save the App ID and App Secret by running:
 
             #{APP_NAME} config --appid=<app-id> --appsecret=<app-secret>
