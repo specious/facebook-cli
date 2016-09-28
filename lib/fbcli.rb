@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.7'
+version '1.3.8'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -164,8 +164,8 @@ command :feed do |c|
   end
 end
 
-consumePhoto = Proc.new do |item|
-  puts item["name"] unless not item.key?("name")
+handlePhoto = Proc.new do |item|
+  puts "#{item["name"]}\n\n" unless not item.key?("name")
   puts link "#{item["id"]}"
   puts "Created: #{date_str(item["created_time"])}"
 end
@@ -173,14 +173,34 @@ end
 desc "List photos you have uploaded"
 command :photos do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "photos?type=uploaded", '- - -', &consumePhoto
+    FBCLI::page_items global_options, "photos?type=uploaded", '- - -', &handlePhoto
   end
 end
 
 desc "List photos you are tagged in"
 command :photosof do |c|
   c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "photos", '- - -', &consumePhoto
+    FBCLI::page_items global_options, "photos", '- - -', &handlePhoto
+  end
+end
+
+handleVideo = Proc.new do |item|
+  puts "#{item["description"]}\n\n" unless not item.key?("description")
+  puts link "#{item["id"]}"
+  puts "Updated: #{date_str(item["updated_time"])}"
+end
+
+desc "List videos you have uploaded"
+command :videos do |c|
+  c.action do |global_options,options,args|
+    FBCLI::page_items global_options, "videos?type=uploaded", '- - -', &handleVideo
+  end
+end
+
+desc "List videos you are tagged in"
+command :videosof do |c|
+  c.action do |global_options,options,args|
+    FBCLI::page_items global_options, "videos", '- - -', &handleVideo
   end
 end
 
