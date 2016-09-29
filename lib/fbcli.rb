@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.11'
+version '1.3.12'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -117,16 +117,39 @@ command :me do |c|
   end
 end
 
-desc "Post to your timeline"
+desc "Post a message or image to your timeline"
 arg_name "message"
 command :post do |c|
-  c.flag [:photo], :desc => 'File or URL of picture to post'
+  c.flag [:i, :image], :desc => 'File or URL of image to post'
   c.action do |global_options,options,args|
-    if options['photo'].nil?
+    if options['image'].nil?
       profile_id, post_id = FBCLI::publish_post global_options, args[0]
     else
-      profile_id, post_id = FBCLI::publish_photo global_options, args[0], options['photo']
+      profile_id, post_id = FBCLI::publish_photo global_options, args[0], options['image']
     end
+
+    puts "Your post: #{link_to_post profile_id, post_id}"
+  end
+end
+
+desc "Post a link to your timeline"
+arg_name "url"
+command :postlink do |c|
+  c.flag [:m, :message], :desc => 'Main message'
+  c.flag [:n, :name], :desc => 'Link name'
+  c.flag [:d, :description], :desc => 'Link description'
+  c.flag [:c, :caption], :desc => 'Link caption'
+  c.flag [:i, :image], :desc => 'Link image'
+  c.action do |global_options,options,args|
+    link_metadata = {
+      "name" => options['name'],
+      "link" => args[0],
+      "caption" => options['caption'],
+      "description" => options['description'],
+      "picture" => options['image']
+    }
+
+    profile_id, post_id = FBCLI::publish_link global_options, options['message'], link_metadata
 
     puts "Your post: #{link_to_post profile_id, post_id}"
   end

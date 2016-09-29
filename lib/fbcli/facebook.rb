@@ -93,13 +93,27 @@ module FBCLI
     [profile_id, post_id]
   end
 
-  def self.publish_photo(global_options, msg, photo_file_or_url)
+  def self.publish_link(global_options, msg, link_metadata)
     if @@api.nil?
       @@api = init_api(global_options)
     end
 
     begin
-      result = @@api.put_picture(photo_file_or_url, {:message => msg})
+      profile_id, post_id = @@api.put_wall_post(msg, link_metadata)['id'].split '_', 2
+    rescue Koala::Facebook::APIError => e
+      exit_now! koala_error_str e
+    end
+
+    [profile_id, post_id]
+  end
+
+  def self.publish_photo(global_options, msg, image_file_or_url)
+    if @@api.nil?
+      @@api = init_api(global_options)
+    end
+
+    begin
+      result = @@api.put_picture(image_file_or_url, {:message => msg})
       profile_id, post_id = result['post_id'].split '_', 2
     rescue Koala::Facebook::APIError => e
       exit_now! koala_error_str e

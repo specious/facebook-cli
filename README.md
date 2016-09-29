@@ -47,7 +47,8 @@ COMMANDS
     pastevents - List your past events
     photos     - List photos you have uploaded
     photosof   - List photos you are tagged in
-    post       - Post to your timeline
+    post       - Post a message or image to your timeline
+    postlink   - Post a link to your timeline
     videos     - List videos you have uploaded
     videosof   - List videos you are tagged in
 ```
