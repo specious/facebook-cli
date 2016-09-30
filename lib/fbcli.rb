@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.12'
+version '1.3.13'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -49,6 +49,7 @@ pre do |global_options,command|
         - Create a new application at: https://developers.facebook.com/apps
         - In the Settings tab, set "Site URL" to "http://localhost" and
           then under "App Domains" add "localhost", and click "Save"
+        - In the "App Review" tab, flip the switch to make your app live.
         - Save the App ID and App Secret by running:
 
             #{APP_NAME} config --appid=<app-id> --appsecret=<app-secret>
@@ -139,7 +140,7 @@ command :postlink do |c|
   c.flag [:n, :name], :desc => 'Link name'
   c.flag [:d, :description], :desc => 'Link description'
   c.flag [:c, :caption], :desc => 'Link caption'
-  c.flag [:i, :image], :desc => 'Link image'
+  c.flag [:i, :image], :desc => 'Link image URL'
   c.action do |global_options,options,args|
     link_metadata = {
       "name" => options['name'],

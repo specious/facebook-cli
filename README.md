@@ -20,6 +20,7 @@ The following steps are necessary to use the Facebook API:
 
 - Create a new application at: https://developers.facebook.com/apps
 - In the "Settings" tab, set "Site URL" to `http://localhost` and then add `localhost` to the "App Domains"
+- In the "App Review" tab, flip the switch to make your app live. This is required for the content you publish through this app to be visible to other users.
 - Save the App ID and App Secret by running: `facebook-cli config --appid=<app-id> --appsecret=<app-secret>`
 
 ## Run
