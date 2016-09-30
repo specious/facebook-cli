@@ -27,6 +27,18 @@ module FBCLI
     str
   end
 
+  def self.logout(global_options)
+    if @@api.nil?
+      @@api = init_api(global_options)
+    end
+
+    begin
+      @@api.delete_object("me/permissions")
+    rescue Koala::Facebook::APIError => e
+      exit_now! koala_error_str e
+    end
+  end
+
   def self.request_object(global_options, id, options = {})
     if @@api.nil?
       @@api = init_api(global_options)

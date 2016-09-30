@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.15'
+version '1.3.16'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -105,6 +105,14 @@ command :login do |c|
       puts
       puts "Have fun!"
     end
+  end
+end
+
+desc "Deauthorize your access token"
+command :logout do |c|
+  c.action do |global_options,options,args|
+    FBCLI::logout global_options
+    puts "You are now logged out."
   end
 end
 
