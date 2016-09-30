@@ -76,6 +76,15 @@ With so much functionality removed, it's not possible to build a full-featured i
 
 If you can get a feature to work, open a pull request.
 
+## Development
+
+Install dependencies with [Bundler](http://bundler.io/):
+
+```
+gem install bundler
+bundle install
+```
+
 ## License
 
 MIT

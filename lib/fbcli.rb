@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.13'
+version '1.3.14'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -41,7 +41,7 @@ pre do |global_options,command|
     begin
       $config = YAML.load_file(CONFIG_FILE)
     rescue
-      exit_now! <<~EOM
+      exit_now! %(
         It looks like you are running #{APP_NAME} for the first time.
 
         The following steps are necessary to use the Facebook API:
@@ -57,7 +57,7 @@ pre do |global_options,command|
         After that, acquire an access token by running:
 
             #{APP_NAME} login
-      EOM
+      )
     end
   end
 
@@ -167,13 +167,13 @@ command :likes do |c|
 end
 
 desc "List the people you are friends with (some limitations)"
-long_desc <<~EOM
+long_desc %(
   As of Graph API v2.0 Facebook no longer provides access to your full friends list.
   As an alternative, we now request 'taggable_friends' which only includes friends
   you are allowed to tag.
 
   See: https://developers.facebook.com/docs/apps/faq#faq_1694316010830088
-EOM
+)
 command :friends do |c|
   c.action do |global_options,options,args|
     FBCLI::page_items global_options, 'taggable_friends' do |item|
