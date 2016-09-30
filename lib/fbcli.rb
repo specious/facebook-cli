@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.14'
+version '1.3.15'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
@@ -284,7 +284,7 @@ command :event do |c|
       FBCLI::request_object(
         global_options,
         id,
-        :fields => 'name,description,place,owner,start_time,end_time,attending_count,interested_count,declined_count,maybe_count,is_canceled'
+        :fields => 'name,description,place,owner,start_time,end_time,attending_count,declined_count,maybe_count,is_canceled'
       ) do |item|
         starts = Time.parse(item['start_time'])
 
@@ -302,13 +302,12 @@ command :event do |c|
         puts "Created by: #{item['owner']['name']}"
         puts
         puts "Attending: #{item['attending_count']}"
-        puts "Interested: #{item['interested_count']}"
         puts "Maybe: #{item['maybe_count']}"
         puts "Declined: #{item['declined_count']}"
         puts
         puts link "events/#{item['id']}"
 
-        if not item['description'].empty?
+        if not (item['description'].nil? || item['description'].empty?)
           puts
           puts item['description']
         end
