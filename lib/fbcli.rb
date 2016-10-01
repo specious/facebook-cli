@@ -10,16 +10,17 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.3.16'
+version '1.4.0'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
-flag [:pages, :p], :desc => 'Max pages', :required => false, :default_value => -1
+flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
 
 def link(path)
   "https://www.facebook.com/#{path}"
 end
 
-def link_to_post(profile_id, post_id)
+def link_to_post(full_post_id)
+  profile_id, post_id = full_post_id.split '_', 2
   link "#{profile_id}/posts/#{post_id}"
 end
 
@@ -34,7 +35,9 @@ def save_config
   end
 end
 
-pre do |global_options,command|
+pre do |global_options, command|
+  $global_options = global_options # They're supposed to be global, right?
+
   if command.name == :config
     $config = {}
   else
@@ -61,6 +64,11 @@ pre do |global_options,command|
     end
   end
 
+  # Let access token passed from the command line take precedence
+  if not global_options[:token].nil?
+    $config['access_token'] = global_options[:token]
+  end
+
   # Success
   true
 end
@@ -76,7 +84,7 @@ desc "Save Facebook application ID and secret"
 command :config do |c|
   c.flag [:appid], :desc => 'Facebook application ID', :required => true
   c.flag [:appsecret], :desc => 'Facebook application secret', :required => true
-  c.action do |global_options,options,args|
+  c.action do |global_options, options|
     $config['app_id'] = options['appid'].to_i
     $config['app_secret'] = options['appsecret']
 
@@ -91,7 +99,7 @@ end
 desc "Log into Facebook and receive an access token"
 command :login do |c|
   c.flag [:port], :desc => 'Local TCP port to serve Facebook login redirect page', :default_value => '3333'
-  c.action do |global_options,options,args|
+  c.action do |global_options, options|
     token, expiration = FBCLI::listen_for_auth_code(options['port'], $config['app_id'], $config['app_secret'])
 
     if not token.nil?
@@ -110,16 +118,16 @@ end
 
 desc "Deauthorize your access token"
 command :logout do |c|
-  c.action do |global_options,options,args|
-    FBCLI::logout global_options
+  c.action do
+    FBCLI::logout
     puts "You are now logged out."
   end
 end
 
 desc "Show your name and profile ID"
 command :me do |c|
-  c.action do |global_options,options,args|
-    FBCLI::request_object global_options, "me" do |data|
+  c.action do
+    FBCLI::request_object "me" do |data|
       puts "Name: #{data["name"]}"
       puts "ID: #{data["id"]}"
     end
@@ -130,14 +138,14 @@ desc "Post a message or image to your timeline"
 arg_name "message"
 command :post do |c|
   c.flag [:i, :image], :desc => 'File or URL of image to post'
-  c.action do |global_options,options,args|
+  c.action do |global_options, options, args|
     if options['image'].nil?
-      profile_id, post_id = FBCLI::publish_post global_options, args[0]
+      full_post_id = FBCLI::publish_post args[0]
     else
-      profile_id, post_id = FBCLI::publish_photo global_options, args[0], options['image']
+      full_post_id = FBCLI::publish_image args[0], options['image']
     end
 
-    puts "Your post: #{link_to_post profile_id, post_id}"
+    puts "Your post: #{link_to_post full_post_id}"
   end
 end
 
@@ -149,7 +157,7 @@ command :postlink do |c|
   c.flag [:d, :description], :desc => 'Link description'
   c.flag [:c, :caption], :desc => 'Link caption'
   c.flag [:i, :image], :desc => 'Link image URL'
-  c.action do |global_options,options,args|
+  c.action do |global_options, options, args|
     link_metadata = {
       "name" => options['name'],
       "link" => args[0],
@@ -158,16 +166,16 @@ command :postlink do |c|
       "picture" => options['image']
     }
 
-    profile_id, post_id = FBCLI::publish_link global_options, options['message'], link_metadata
+    full_post_id = FBCLI::publish_post options['message'], link_metadata
 
-    puts "Your post: #{link_to_post profile_id, post_id}"
+    puts "Your post: #{link_to_post full_post_id}"
   end
 end
 
 desc "List the pages you have 'Liked'"
 command :likes do |c|
-  c.action do |global_options,options,args|
-    FBCLI::page_items global_options, 'likes', '' do |item|
+  c.action do
+    FBCLI::page_items 'likes', '' do |item|
       puts item["name"]
       puts link item["id"]
     end
@@ -183,8 +191,8 @@ long_desc %(
   See: https://developers.facebook.com/docs/apps/faq#faq_1694316010830088
 )
 command :friends do |c|
-  c.action do |global_options,options,args|
-    FBCLI::page_items global_options, 'taggable_friends' do |item|
+  c.action do
+    FBCLI::page_items 'taggable_friends' do |item|
       puts item['name']
     end
   end
@@ -192,12 +200,10 @@ end
 
 desc "List the posts on your profile"
 command :feed do |c|
-  c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "feed", '- - -' do |item|
-      profile_id, post_id = item["id"].split '_', 2
-
+  c.action do
+    FBCLI::page_items "feed", '- - -' do |item|
       puts item["message"] if item.has_key?("message")
-      puts link_to_post profile_id, post_id
+      puts link_to_post item["id"]
       puts "Created: #{date_str(item["created_time"])}"
     end
   end
@@ -211,15 +217,15 @@ end
 
 desc "List photos you have uploaded"
 command :photos do |c|
-  c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "photos?type=uploaded", '- - -', &handlePhoto
+  c.action do
+    FBCLI::page_items "photos?type=uploaded", '- - -', &handlePhoto
   end
 end
 
 desc "List photos you are tagged in"
 command :photosof do |c|
-  c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "photos", '- - -', &handlePhoto
+  c.action do
+    FBCLI::page_items "photos", '- - -', &handlePhoto
   end
 end
 
@@ -231,19 +237,19 @@ end
 
 desc "List videos you have uploaded"
 command :videos do |c|
-  c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "videos?type=uploaded", '- - -', &handleVideo
+  c.action do
+    FBCLI::page_items "videos?type=uploaded", '- - -', &handleVideo
   end
 end
 
 desc "List videos you are tagged in"
 command :videosof do |c|
-  c.action do |global_options,options,args|
-    FBCLI::page_items global_options, "videos", '- - -', &handleVideo
+  c.action do
+    FBCLI::page_items "videos", '- - -', &handleVideo
   end
 end
 
-def list_events(global_options, past = false)
+def list_events(past = false)
   now = Time.new
 
   filter = lambda { |item|
@@ -251,7 +257,7 @@ def list_events(global_options, past = false)
     not ((past and starts < now) ^ (not past and starts > now))
   }
 
-  FBCLI::page_items global_options, "events", '- - -', filter do |item|
+  FBCLI::page_items "events", '- - -', filter do |item|
     starts = Time.parse(item['start_time'])
 
     unless item['end_time'].nil?
@@ -272,25 +278,24 @@ end
 
 desc "List your upcoming events"
 command :events do |c|
-  c.action do |global_options,options,args|
-    list_events global_options
+  c.action do
+    list_events
   end
 end
 
 desc "List your past events"
 command :pastevents do |c|
-  c.action do |global_options,options,args|
-    list_events global_options, true
+  c.action do
+    list_events true
   end
 end
 
 desc "Show event details"
 arg_name "[ids...]"
 command :event do |c|
-  c.action do |global_options,options,args|
+  c.action do |global_options, options, args|
     args.each_with_index do |id, index|
       FBCLI::request_object(
-        global_options,
         id,
         :fields => 'name,description,place,owner,start_time,end_time,attending_count,declined_count,maybe_count,is_canceled'
       ) do |item|

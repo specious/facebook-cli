@@ -3,12 +3,7 @@ require 'koala'
 module FBCLI
   @@api = nil
 
-  def self.init_api(global_options)
-    # Access token passed from the command line takes precedence
-    if not global_options[:token].nil?
-      $config['access_token'] = global_options[:token]
-    end
-
+  def self.init_api
     if $config['access_token'].nil? or $config['access_token'].empty?
       exit_now! "You must first acquire an access token; run: #{APP_NAME} login"
     end
@@ -27,53 +22,41 @@ module FBCLI
     str
   end
 
-  def self.logout(global_options)
-    if @@api.nil?
-      @@api = init_api(global_options)
-    end
+  def self.api_call(lambda)
+    @@api = init_api if @@api.nil?
 
     begin
-      @@api.delete_object("me/permissions")
+      lambda.call(@@api)
     rescue Koala::Facebook::APIError => e
       exit_now! koala_error_str e
     end
   end
 
-  def self.request_object(global_options, id, options = {})
-    if @@api.nil?
-      @@api = init_api(global_options)
-    end
+  def self.logout
+    api_call lambda { |api| api.delete_object("me/permissions") }
+  end
 
-    begin
-      @@api.get_object(id, options) do |data|
+  def self.request_object(id, options = {})
+    api_call lambda { |api|
+      api.get_object(id, options) do |data|
         yield data
       end
-    rescue Koala::Facebook::APIError => e
-      exit_now! koala_error_str e
-    end
+    }
   end
 
-  def self.request_personal_connections(global_options, cmd)
-    if @@api.nil?
-      @@api = init_api(global_options)
-    end
-
-    begin
-      data = @@api.get_connections("me", cmd)
-    rescue Koala::Facebook::APIError => e
-      exit_now! koala_error_str e
-    end
-
-    data
+  def self.request_personal_connections(cmd)
+    api_call lambda { |api|
+      api.get_connections("me", cmd)
+    }
   end
 
-  def self.page_items(global_options, cmd, separator = nil, filter = nil)
-    items = request_personal_connections(global_options, cmd)
+  def self.page_items(cmd, separator = nil, filter = nil)
+    items = request_personal_connections(cmd)
 
     virgin = true
     count = 0
 
-    while not (items.nil? or count == global_options['pages'].to_i) do
+    while not (items.nil? or count == $global_options['pages']) do
       items.each_with_index { |item, idx|
         if filter.nil? or not filter.call(item)
           unless separator.nil? or virgin
@@ -91,46 +74,13 @@ module FBCLI
     end
   end
 
-  def self.publish_post(global_options, msg)
-    if @@api.nil?
-      @@api = init_api(global_options)
-    end
-
-    begin
-      profile_id, post_id = @@api.put_wall_post(msg)['id'].split '_', 2
-    rescue Koala::Facebook::APIError => e
-      exit_now! koala_error_str e
-    end
-
-    [profile_id, post_id]
+  def self.publish_post(msg, link_metadata = {})
+    result = api_call lambda { |api| api.put_wall_post(msg, link_metadata) }
+    result['id']
   end
 
-  def self.publish_link(global_options, msg, link_metadata)
-    if @@api.nil?
-      @@api = init_api(global_options)
-    end
-
-    begin
-      profile_id, post_id = @@api.put_wall_post(msg, link_metadata)['id'].split '_', 2
-    rescue Koala::Facebook::APIError => e
-      exit_now! koala_error_str e
-    end
-
-    [profile_id, post_id]
-  end
-
-  def self.publish_photo(global_options, msg, image_file_or_url)
-    if @@api.nil?
-      @@api = init_api(global_options)
-    end
-
-    begin
-      result = @@api.put_picture(image_file_or_url, {:message => msg})
-      profile_id, post_id = result['post_id'].split '_', 2
-    rescue Koala::Facebook::APIError => e
-      exit_now! koala_error_str e
-    end
-
-    [profile_id, post_id]
+  def self.publish_image(msg, image_file_or_url)
+    result = api_call lambda { |api| api.put_picture(image_file_or_url, {:message => msg}) }
+    result['post_id']
   end
 end
