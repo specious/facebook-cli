@@ -83,4 +83,9 @@ module FBCLI
     result = api_call lambda { |api| api.put_picture(image_file_or_url, {:message => msg}) }
     result['post_id']
   end
+
+  def self.publish_video(msg, video_file_or_url, title = nil)
+    result = api_call lambda { |api| api.put_video(video_file_or_url, {:title => title, :description => msg}) }
+    result['id']
+  end
 end

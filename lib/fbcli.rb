@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.0'
+version '1.4.1'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
@@ -136,16 +136,41 @@ end
 
 desc "Post a message or image to your timeline"
 arg_name "message"
+long_desc %(
+  Facebook advises: photos should be less than 4 MB and saved as JPG, PNG, GIF or TIFF files.
+)
 command :post do |c|
   c.flag [:i, :image], :desc => 'File or URL of image to post'
   c.action do |global_options, options, args|
-    if options['image'].nil?
-      full_post_id = FBCLI::publish_post args[0]
-    else
+    if not options['image'].nil?
       full_post_id = FBCLI::publish_image args[0], options['image']
+    else
+      full_post_id = FBCLI::publish_post args[0]
     end
 
     puts "Your post: #{link_to_post full_post_id}"
+  end
+end
+
+desc "Post a video to your timeline"
+arg_name "message"
+long_desc %(
+  Facebook advises: aspect ratio must be between 9x16 and 16x9. The following formats are
+  supported:
+
+  3g2, 3gp, 3gpp, asf, avi, dat, divx, dv, f4v, flv, m2ts, m4v,
+  mkv, mod, mov, mp4, mpe, mpeg, mpeg4, mpg, mts, nsv, ogm, ogv, qt, tod,
+  ts, vob, and wmv
+)
+command :postvideo do |c|
+  c.flag [:v, :video], :desc => 'File or URL of video'
+  c.flag [:t, :title], :desc => 'Title'
+  c.action do |global_options, options, args|
+    video_id = FBCLI::publish_video args[0], options['video'], options['title']
+    puts "Your post: #{link video_id}"
+    puts "Edit your video: #{link "video/edit/?v=#{video_id}"}"
+    puts
+    puts "It might take a few minutes for your video to become available."
   end
 end
 

@@ -51,6 +51,7 @@ COMMANDS
     photosof   - List photos you are tagged in
     post       - Post a message or image to your timeline
     postlink   - Post a link to your timeline
+    postvideo  - Post a video to your timeline
     videos     - List videos you have uploaded
     videosof   - List videos you are tagged in
 ```
