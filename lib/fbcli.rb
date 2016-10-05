@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.1'
+version '1.4.2'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
@@ -37,6 +37,9 @@ end
 
 pre do |global_options, command|
   $global_options = global_options # They're supposed to be global, right?
+
+  # Do not print stack trace when terminating due to a broken pipe
+  Signal.trap "SIGPIPE", "SYSTEM_DEFAULT"
 
   if command.name == :config
     $config = {}
