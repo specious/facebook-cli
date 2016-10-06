@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.2'
+version '1.4.3'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
@@ -24,9 +24,10 @@ def link_to_post(full_post_id)
   link "#{profile_id}/posts/#{post_id}"
 end
 
-# Facebook returns dates in ISO 8601 format
+# Facebook returns dates in ISO 8601 format, UTC time zone
 def date_str(fb_date)
-  Time.parse(fb_date).localtime.rfc2822
+  # Convert to human friendly representation in user's time zone (almost RFC 2822)
+  Time.parse(fb_date).localtime.strftime('%a, %-d %b %Y %H:%M:%S %Z')
 end
 
 def save_config
