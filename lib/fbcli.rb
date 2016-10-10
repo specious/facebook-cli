@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.3'
+version '1.4.4'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
@@ -24,10 +24,12 @@ def link_to_post(full_post_id)
   link "#{profile_id}/posts/#{post_id}"
 end
 
-# Facebook returns dates in ISO 8601 format, UTC time zone
-def date_str(fb_date)
+# Facebook returns dates in ISO 8601 or unix timestamp format
+def date_str(date)
+  t = (date.is_a? Integer) ? Time.at(date) : Time.parse(date).localtime
+
   # Convert to human friendly representation in user's time zone (almost RFC 2822)
-  Time.parse(fb_date).localtime.strftime('%a, %-d %b %Y %H:%M:%S %Z')
+  t.strftime('%a, %-d %b %Y %H:%M:%S %Z')
 end
 
 def save_config
@@ -103,19 +105,34 @@ end
 desc "Log into Facebook and receive an access token"
 command :login do |c|
   c.flag [:port], :desc => 'Local TCP port to serve Facebook login redirect page', :default_value => '3333'
+  c.switch [:info], :desc => 'Show information about the current access token and exit', :negatable => false
   c.action do |global_options, options|
-    token, expiration = FBCLI::listen_for_auth_code(options['port'], $config['app_id'], $config['app_secret'])
+    if options['info']
+      begin
+        FBCLI::request_token_info do |data|
+          puts "Your access token was issued on: #{date_str(data['issued_at'])}"
+          puts
+          puts "It is valid until: #{date_str(data['expires_at'])}"
+          puts
+          puts "Permissions: #{data['scopes'].join(', ')}"
+        end
+      rescue
+        puts "Your access token does not appear to be valid for this application."
+      end
+    else
+      token, expiration = FBCLI::listen_for_auth_code(options['port'], $config['app_id'], $config['app_secret'])
 
-    if not token.nil?
-      $config['access_token'] = token
+      if not token.nil?
+        $config['access_token'] = token
 
-      save_config
+        save_config
 
-      puts "Your access token: #{token}"
-      puts
-      puts "Expires in: #{FBCLI::expiration_str(expiration.to_i)}"
-      puts
-      puts "Have fun!"
+        puts "Your access token: #{token}"
+        puts
+        puts "Expires in: #{FBCLI::expiration_str(expiration.to_i)}"
+        puts
+        puts "Have fun!"
+      end
     end
   end
 end

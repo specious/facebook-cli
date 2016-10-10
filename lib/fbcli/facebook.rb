@@ -36,6 +36,14 @@ module FBCLI
     api_call lambda { |api| api.delete_object("me/permissions") }
   end
 
+  def self.request_token_info
+    api_call lambda { |api|
+      api.debug_token $config['access_token'] do |res|
+        yield res['data']
+      end
+    }
+  end
+
   def self.request_object(id, options = {})
     api_call lambda { |api|
       api.get_object(id, options) do |data|
