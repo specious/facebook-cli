@@ -59,12 +59,6 @@ module FBCLI
     res = Net::HTTP.get_response(URI.parse(auth_uri))
     res = JSON.parse(res.body)
 
-    [res["access_token"], res["expires_in"]]
-  end
-
-  def self.expiration_str(seconds)
-    h, m = seconds.divmod(60 * 3600)
-
-    "#{h} hours and #{m.div 3600} minutes"
+    res["access_token"]
   end
 end

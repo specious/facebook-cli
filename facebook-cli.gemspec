@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'facebook-cli'
-  s.version       = '1.4.6'
+  s.version       = '1.4.7'
   s.licenses      = ['MIT']
   s.summary       = 'Facebook command line utility'
   s.description   = 'A limited command line interface to Facebook'
@@ -10,5 +10,4 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.executables   = ['facebook-cli']
   s.homepage      = 'https://github.com/specious/facebook-cli'
-  s.required_ruby_version = '>= 2.3'
 end

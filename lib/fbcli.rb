@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.6'
+version '1.4.7'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
@@ -120,7 +120,7 @@ command :login do |c|
         puts "Your access token does not appear to be valid for this application."
       end
     else
-      token, expiration = FBCLI::listen_for_auth_code(options['port'], $config['app_id'], $config['app_secret'])
+      token = FBCLI::listen_for_auth_code(options['port'], $config['app_id'], $config['app_secret'])
 
       if not token.nil?
         $config['access_token'] = token
@@ -129,7 +129,9 @@ command :login do |c|
 
         puts "Your access token: #{token}"
         puts
-        puts "Expires in: #{FBCLI::expiration_str(expiration.to_i)}"
+        puts "To find out when it is scheduled to expire, run:"
+        puts
+        puts "  #{APP_NAME} login --info"
         puts
         puts "Have fun!"
       end
