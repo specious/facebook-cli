@@ -3,14 +3,14 @@ require 'yaml'
 require 'fbcli/auth'
 require 'fbcli/facebook'
 
-APP_NAME = File.split($0)[1]
+APP_NAME = File.basename($0, File.extname($0))
 CONFIG_FILE = File.join(ENV['HOME'], ".#{APP_NAME}rc")
 
 include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.4'
+version '1.4.5'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
@@ -50,23 +50,23 @@ pre do |global_options, command|
     begin
       $config = YAML.load_file(CONFIG_FILE)
     rescue
-      exit_now! %(
-        It looks like you are running #{APP_NAME} for the first time.
+      exit_now! <<-EOM
+It looks like you are running #{APP_NAME} for the first time.
 
-        The following steps are necessary to use the Facebook API:
+The following steps are necessary to use the Facebook API:
 
-        - Create a new application at: https://developers.facebook.com/apps
-        - In the Settings tab, set "Site URL" to "http://localhost" and
-          then under "App Domains" add "localhost", and click "Save"
-        - In the "App Review" tab, flip the switch to make your app live.
-        - Save the App ID and App Secret by running:
+- Create a new application at: https://developers.facebook.com/apps
+- In the Settings tab, set "Site URL" to "http://localhost" and
+  then under "App Domains" add "localhost", and click "Save"
+- In the "App Review" tab, flip the switch to make your app live.
+- Save the App ID and App Secret by running:
 
-            #{APP_NAME} config --appid=<app-id> --appsecret=<app-secret>
+    #{APP_NAME} config --appid=<app-id> --appsecret=<app-secret>
 
-        After that, acquire an access token by running:
+After that, acquire an access token by running:
 
-            #{APP_NAME} login
-      )
+    #{APP_NAME} login
+      EOM
     end
   end
 
