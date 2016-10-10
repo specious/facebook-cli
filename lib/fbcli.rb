@@ -10,7 +10,7 @@ include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.5'
+version '1.4.6'
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
@@ -114,7 +114,7 @@ command :login do |c|
           puts
           puts "It is valid until: #{date_str(data['expires_at'])}"
           puts
-          puts "Permissions: #{data['scopes'].join(', ')}"
+          puts "Permissions:\n  - #{data['scopes'].join("\n  - ")}"
         end
       rescue
         puts "Your access token does not appear to be valid for this application."
