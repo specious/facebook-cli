@@ -1,6 +1,11 @@
+lib = File.expand_path '../lib', __FILE__
+$LOAD_PATH.unshift lib unless $LOAD_PATH.include?(lib)
+
+require 'fbcli/version'
+
 Gem::Specification.new do |s|
   s.name          = 'facebook-cli'
-  s.version       = '1.4.7'
+  s.version       = FBCLI::VERSION
   s.licenses      = ['MIT']
   s.summary       = 'Facebook command line utility'
   s.description   = 'A limited command line interface to Facebook'

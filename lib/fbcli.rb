@@ -1,16 +1,17 @@
 require 'gli'
 require 'yaml'
 require 'fbcli/auth'
+require 'fbcli/version'
 require 'fbcli/facebook'
 
-APP_NAME = File.basename($0, File.extname($0))
+APP_NAME    = File.basename($0, File.extname($0))
 CONFIG_FILE = File.join(ENV['HOME'], ".#{APP_NAME}rc")
 
 include GLI::App
 
 program_desc "Facebook command line interface"
 
-version '1.4.7'
+version FBCLI::VERSION
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
 flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
