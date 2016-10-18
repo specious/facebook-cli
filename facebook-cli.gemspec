@@ -15,4 +15,8 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.executables   = ['facebook-cli']
   s.homepage      = 'https://github.com/specious/facebook-cli'
+
+  s.add_dependency "koala", "~> 2.2"
+  s.add_dependency "json", "~> 2.0"
+  s.add_dependency "gli", "~> 2.14"
 end
