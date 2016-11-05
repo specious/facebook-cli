@@ -259,6 +259,23 @@ command :feed do |c|
   end
 end
 
+desc "List stories you are tagged in"
+command :tagged do |c|
+  c.switch [:date], :desc => 'Include date you were tagged on'
+  c.action do |global_options, options|
+    FBCLI::page_items 'tagged', '- - -' do |item|
+      if item["story"]
+        puts "### #{item["story"]}"
+        puts
+      end
+      puts item["message"] if item.has_key?("message")
+      puts
+      puts link_to_post item["id"]
+      puts "Tagged on: #{date_str(item["tagged_time"])}" if options['date']
+    end
+  end
+end
+
 handlePhoto = Proc.new do |item|
   puts "#{item["name"]}\n\n" unless not item.key?("name")
   puts link "#{item["id"]}"
