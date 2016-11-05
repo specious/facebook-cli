@@ -12,8 +12,6 @@ Facebook command line interface
 gem install facebook-cli
 ```
 
-Requires Ruby 2.3 or later.
-
 ## Facebook configuration
 
 The following steps are necessary to use the Facebook API:

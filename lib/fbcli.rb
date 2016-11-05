@@ -221,7 +221,7 @@ command :postlink do |c|
   end
 end
 
-desc "List the pages you have 'Liked'"
+desc "List pages you have 'Liked'"
 command :likes do |c|
   c.action do
     FBCLI::page_items 'likes', '' do |item|
@@ -231,7 +231,7 @@ command :likes do |c|
   end
 end
 
-desc "List the people you are friends with (some limitations)"
+desc "List people you are friends with (some limitations)"
 long_desc %(
   As of Graph API v2.0 Facebook no longer provides access to your full friends list.
   As an alternative, we now request 'taggable_friends' which only includes friends
@@ -247,11 +247,12 @@ command :friends do |c|
   end
 end
 
-desc "List the posts on your profile"
+desc "List posts on your profile"
 command :feed do |c|
   c.action do
     FBCLI::page_items "feed", '- - -' do |item|
       puts item["message"] if item.has_key?("message")
+      puts
       puts link_to_post item["id"]
       puts "Created: #{date_str(item["created_time"])}"
     end
