@@ -41,6 +41,7 @@ COMMANDS
     friends    - List the people you are friends with (some limitations)
     help       - Shows a list of commands or help for one command
     likes      - List the pages you have 'Liked'
+    links      - Some useful URLs
     login      - Log into Facebook and receive an access token
     logout     - Deauthorize your access token
     me         - Show your name and profile ID

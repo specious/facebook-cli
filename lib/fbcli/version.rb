@@ -1,3 +1,3 @@
 module FBCLI
-  VERSION = '1.4.12'
+  VERSION = '1.4.13'
 end

@@ -158,6 +158,28 @@ command :me do |c|
   end
 end
 
+desc "Some useful URLs"
+command :links do |c|
+  c.action do
+    puts "A few URLs Facebook doesn't want you to know:"
+    puts
+    puts "Manage application settings"
+    puts "  https://www.facebook.com/settings?tab=applications"
+    puts
+    puts "Photos"
+    puts "  https://www.facebook.com/me/photos_albums"
+    puts
+    puts "Activity log"
+    puts "  https://www.facebook.com/me/allactivity"
+    puts
+    puts "Search Facebook"
+    puts "  https://www.facebook.com/search/top/?q=ethereum"
+    puts
+    puts "Edit a video"
+    puts "  https://www.facebook.com/video/edit/?v=VIDEO_ID"
+  end
+end
+
 desc "Post a message or image to your timeline"
 arg_name "message"
 long_desc %(
