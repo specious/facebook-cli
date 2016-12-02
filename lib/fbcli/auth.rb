@@ -4,7 +4,7 @@ require 'webrick'
 require 'json'
 
 module FBCLI
-  API_VERSION = "2.7"
+  API_VERSION = "2.8"
 
   def self.listen_for_auth_code(port, app_id, app_secret)
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
