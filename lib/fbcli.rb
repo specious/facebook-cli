@@ -148,12 +148,12 @@ command :logout do |c|
   end
 end
 
-desc "Show your name and profile ID"
+desc "Show your profile information"
 command :me do |c|
   c.action do
     FBCLI::request_object "me" do |data|
-      puts "Name: #{data["name"]}"
-      puts "ID: #{data["id"]}"
+      puts "Name: #{data["name"]} (#{data["id"]})"
+      puts "Picture: http://graph.facebook.com/#{data["id"]}/picture?type=large"
     end
   end
 end

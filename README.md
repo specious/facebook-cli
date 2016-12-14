@@ -44,7 +44,7 @@ COMMANDS
     links      - Some useful URLs
     login      - Log into Facebook and receive an access token
     logout     - Deauthorize your access token
-    me         - Show your name and profile ID
+    me         - Show your profile information
     pastevents - List your past events
     photos     - List photos you have uploaded
     photosof   - List photos you are tagged in
