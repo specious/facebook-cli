@@ -32,8 +32,16 @@ module FBCLI
     end
   end
 
+  def self.raw_request(req)
+    api_call lambda { |api|
+      api.graph_call req
+    }
+  end
+
   def self.logout
-    api_call lambda { |api| api.delete_object("me/permissions") }
+    api_call lambda { |api|
+      api.delete_object("me/permissions")
+    }
   end
 
   def self.request_token_info
@@ -83,17 +91,26 @@ module FBCLI
   end
 
   def self.publish_post(msg, link_metadata = {})
-    result = api_call lambda { |api| api.put_wall_post(msg, link_metadata) }
+    result = api_call lambda { |api|
+      api.put_wall_post(msg, link_metadata)
+    }
+
     result['id']
   end
 
   def self.publish_image(msg, image_file_or_url)
-    result = api_call lambda { |api| api.put_picture(image_file_or_url, {:message => msg}) }
+    result = api_call lambda { |api|
+      api.put_picture(image_file_or_url, {:message => msg})
+    }
+
     result['post_id']
   end
 
   def self.publish_video(msg, video_file_or_url, title = nil)
-    result = api_call lambda { |api| api.put_video(video_file_or_url, {:title => title, :description => msg}) }
+    result = api_call lambda { |api|
+      api.put_video(video_file_or_url, {:title => title, :description => msg})
+    }
+
     result['id']
   end
 end

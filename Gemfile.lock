@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    facebook-cli (1.4.14)
+    facebook-cli (1.4.15)
       gli (~> 2.14)
       json (~> 2.0)
       koala (~> 2.2)

@@ -1,5 +1,6 @@
 require 'gli'
 require 'yaml'
+require 'json'
 require 'fbcli/auth'
 require 'fbcli/version'
 require 'fbcli/facebook'
@@ -145,6 +146,32 @@ command :logout do |c|
   c.action do
     FBCLI::logout
     puts "You are now logged out."
+  end
+end
+
+desc "Make a Facebook API request"
+arg_name "request"
+long_desc %(
+  This is similar to the online tool:
+
+    https://developers.facebook.com/tools/explorer
+
+  For example, try:
+
+    #{APP_NAME} api "165795193558366?fields=name,about,website"
+
+  To view the list of valid fields you can request, ask for the metadata:
+
+    #{APP_NAME} api "165795193558366?metadata=1"
+
+  Some valid requests may not be honored due to insufficient permissions, which were established during the authentication process.
+)
+command :api do |c|
+  c.switch [:raw], :desc => 'Output unformatted JSON', :negatable => false
+  c.action do |global_options, options, args|
+    res = FBCLI::raw_request args[0]
+    res = JSON.pretty_generate res unless options['raw']
+    puts res
   end
 end
 
