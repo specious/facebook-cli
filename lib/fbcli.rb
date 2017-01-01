@@ -1,6 +1,7 @@
 require 'gli'
 require 'yaml'
 require 'json'
+require 'jsonpath'
 require 'fbcli/auth'
 require 'fbcli/version'
 require 'fbcli/facebook'
@@ -164,13 +165,42 @@ long_desc %(
 
     #{APP_NAME} api "165795193558366?metadata=1"
 
-  Some valid requests may not be honored due to insufficient permissions, which were established during the authentication process.
+  Moreover, you can extract a value from the response using --get. For example:
+
+    #{APP_NAME} api --get name 165795193558366
+
+  Use JsonPath language to retrieve nested values. For example:
+
+    #{APP_NAME} api --get "metadata.fields..name" "165795193558366?metadata=1"
+
+  Some valid requests may not be honored or return incomplete results due to
+  insufficient permissions, which were established during the authentication
+  process.
 )
 command :api do |c|
+  c.flag [:get], :desc => "Extract a particular value from the JSON response"
   c.switch [:raw], :desc => 'Output unformatted JSON', :negatable => false
   c.action do |global_options, options, args|
     res = FBCLI::raw_request args[0]
-    res = JSON.pretty_generate res unless options['raw']
+
+    # Extract value(s) using JsonPath
+    if options['get']
+      path = JsonPath.new("$.#{options['get']}")
+      res = path.on(res)
+
+      # If the result is a JSON structure, unwrap it
+      if res[0].class == Hash
+        res = res[0]
+      end
+    end
+
+    # Nicely format JSON result if not --raw
+    unless options['raw']
+      if res.class == Hash
+        res = JSON.pretty_generate res
+      end
+    end
+
     puts res
   end
 end

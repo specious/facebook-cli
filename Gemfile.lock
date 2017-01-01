@@ -1,9 +1,10 @@
 PATH
   remote: .
   specs:
-    facebook-cli (1.4.15)
+    facebook-cli (1.5.0)
       gli (~> 2.14)
       json (~> 2.0)
+      jsonpath (~> 0.5)
       koala (~> 2.2)
 
 GEM
@@ -11,10 +12,12 @@ GEM
   specs:
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
-    faraday (0.10.0)
+    faraday (0.10.1)
       multipart-post (>= 1.2, < 3)
     gli (2.14.0)
     json (2.0.2)
+    jsonpath (0.5.8)
+      multi_json
     koala (2.4.0)
       addressable
       faraday
