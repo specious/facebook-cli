@@ -74,7 +74,7 @@ Facebook has removed a large portion of their Graph API starting with version 2.
 * [Facebook Announces Graph API v2.3, More Deprecations](https://www.webniraj.com/2015/03/26/facebook-announces-graph-api-v2-3-more-deprecations/)
 * [Facebook API: Getting Friends Using Graph API 2.0 and PHP SDK 4.0.x](https://www.webniraj.com/2014/06/12/facebook-api-getting-friends-using-graph-api-2-0-and-php-sdk-4-0-x/)
 
-With so much functionality removed, it's not possible to build a full-featured interface to Facebook using the API.
+With so much functionality removed, it's not possible to build a full-featured interface to Facebook through the API.
 
 If you can get a feature to work, open a pull request.
 
@@ -86,6 +86,8 @@ Install dependencies with [Bundler](http://bundler.io/):
 gem install bundler
 bundle install
 ```
+
+Please read the guide on [how to contribute](CONTRIBUTING.md).
 
 ## License
 
