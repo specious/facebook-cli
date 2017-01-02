@@ -234,6 +234,12 @@ command :links do |c|
     puts
     puts "Edit a video"
     puts "  https://www.facebook.com/video/edit/?v=VIDEO_ID"
+    puts
+    puts "Graph API explorer"
+    puts "  https://developers.facebook.com/tools/explorer/"
+    puts
+    puts "Sharing debugger"
+    puts "  https://developers.facebook.com/tools/debug/"
   end
 end
 
