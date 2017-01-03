@@ -6,7 +6,7 @@ require 'fbcli/version'
 Gem::Specification.new do |s|
   s.name          = 'facebook-cli'
   s.version       = FBCLI::VERSION
-  s.licenses      = ['MIT']
+  s.licenses      = ['ISC']
   s.summary       = 'Facebook command line utility'
   s.description   = 'A limited command line interface to Facebook'
   s.authors       = ['Ildar Sagdejev']

@@ -91,4 +91,4 @@ Please read the guide on [how to contribute](CONTRIBUTING.md).
 
 ## License
 
-MIT
+ISC
