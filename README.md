@@ -9,7 +9,7 @@ Facebook command line interface
 ## Install
 
 ```
-gem install facebook-cli
+sudo gem install facebook-cli
 ```
 
 ## Facebook configuration
@@ -83,7 +83,7 @@ If you can get a feature to work, open a pull request.
 Install dependencies with [Bundler](http://bundler.io/):
 
 ```
-gem install bundler
+sudo gem install bundler
 bundle install
 ```
 
