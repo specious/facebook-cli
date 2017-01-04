@@ -28,7 +28,13 @@ To interact with the Facebook API you must create and configure a new Facebook a
   - Click "Confirm" to make your app live ([why?](# "This is required for any content you publish through this app to be visible to other users."))
 - Go to the "Dashboard" tab
   - Under "App Secret" click "Show" to reveal your app secret
-  - Open a terminal and save your App ID and App Secret by running: `facebook-cli config --appid=<app-id> --appsecret=<app-secret>`
+  - Open a terminal and save your App ID and App Secret by running:<br>
+
+    ```
+    facebook-cli config --appid=<app-id> --appsecret=<app-secret>
+    ```
+
+See: [detailed instructions with screenshots](doc/configuration.md)
 
 ## Logging in
 
@@ -41,6 +47,8 @@ Once configured, you must log into Facebook with your credentials to authorize *
   - Select the scope of your audience for any posts you publish using this application ([read more](https://www.facebook.com/help/211513702214269))
   - Click "Ok" to continue
   - Close the browser tab
+
+See: [detailed instructions with screenshots](doc/configuration.md#logging-in)
 
 ## Run
 
