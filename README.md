@@ -1,6 +1,6 @@
 # Facebook CLI
 
-Facebook command line interface
+Discover new Facebook functionality from the command line.
 
 ## Demo
 
