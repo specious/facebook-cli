@@ -103,9 +103,13 @@ Facebook has removed a large portion of their Graph API starting with version 2.
 * [Facebook Announces Graph API v2.3, More Deprecations](https://www.webniraj.com/2015/03/26/facebook-announces-graph-api-v2-3-more-deprecations/)
 * [Facebook API: Getting Friends Using Graph API 2.0 and PHP SDK 4.0.x](https://www.webniraj.com/2014/06/12/facebook-api-getting-friends-using-graph-api-2-0-and-php-sdk-4-0-x/)
 
+In an [article](https://developers.facebook.com/blog/post/2012/10/10/growing-quality-apps-with-open-graph/) published in October, 2012, Facebook developer [Henry Zhang](https://www.facebook.com/hzz) wrote:
+
+> Post to friends wall via the API generate a high levels of negative user feedback, including “Hides” and “Mark as Spam" and so we are removing it from the API. If you want to allow people to post to their friend’s timeline from your app, you can invoke the feed dialog.
+
 With so much functionality removed, it's not possible to build a full-featured interface to Facebook through the API.
 
-If you can get a feature to work, open a pull request.
+If you can get a feature to work, please [contribute](CONTRIBUTING.md).
 
 ## Development
 
