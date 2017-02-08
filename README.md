@@ -8,9 +8,7 @@ Discover new Facebook functionality from the command line.
 
 ## Install
 
-```
-sudo gem install facebook-cli
-```
+`gem install meetup-cli` *(might require sudo)*
 
 ## Facebook configuration
 
@@ -116,7 +114,7 @@ If you can get a feature to work, please [contribute](CONTRIBUTING.md).
 Install dependencies with [Bundler](http://bundler.io/):
 
 ```
-sudo gem install bundler
+gem install bundler
 bundle install
 ```
 
