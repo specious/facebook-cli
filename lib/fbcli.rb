@@ -449,6 +449,26 @@ command :pastevents do |c|
   end
 end
 
+desc "Post to a message to a User Group."
+long_desc %(
+    You can post a message to a User Group you are a member as long as
+    you know the Group ID. 
+)
+arg_name "message"
+command :postgroup do |c|
+    c.flag [:i, :groupid], :desc => 'User Group ID'
+    c.action do |global_options, options, args|
+      full_post_id = FBCLI::publish_group options['groupid'], args[0]
+      
+      group_id, post_id = full_post_id.split '_', 2
+      
+    puts "Your post to the group is : https://www.facebook.com/groups/#{group_id}/permalink/#{post_id}"
+    end
+    
+
+end 
+
+
 desc "Show event details"
 arg_name "[ids...]"
 command :event do |c|
