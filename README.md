@@ -8,7 +8,7 @@ Discover new Facebook functionality from the command line.
 
 ## Install
 
-`gem install meetup-cli` *(might require sudo)*
+`gem install facebook-cli` *(might require sudo)*
 
 ## Facebook configuration
 
