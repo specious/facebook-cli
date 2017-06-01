@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    facebook-cli (1.5.2)
+    facebook-cli (1.5.3)
       gli (~> 2.14)
       json (~> 2.0)
       jsonpath (~> 0.5)
@@ -16,7 +16,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     gli (2.14.0)
     json (2.0.2)
-    jsonpath (0.5.8)
+    jsonpath (0.8.3)
       multi_json
     koala (2.4.0)
       addressable
@@ -36,4 +36,4 @@ DEPENDENCIES
   koala (~> 2.2)
 
 BUNDLED WITH
-   1.13.6
+   1.15.0

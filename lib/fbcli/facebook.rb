@@ -97,6 +97,14 @@ module FBCLI
 
     result['id']
   end
+  
+  def self.publish_post_group(msg, groupid)
+    result = api_call lambda { |api|
+      api.put_connections(groupid,{:message => msg})
+    }
+
+    result['id']
+  end
 
   def self.publish_image(msg, image_file_or_url)
     result = api_call lambda { |api|
