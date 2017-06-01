@@ -257,7 +257,11 @@ long_desc %(
 )
 command :post do |c|
   c.flag [:i, :image], :desc => 'File or URL of image to post'
+  c.flag [:g, :groupid], :desc => 'Group id for post'
   c.action do |global_options, options, args|
+    if not options['groupid'].nil?
+      full_post_id = FBCLI::publish_post_group args[0], options['groupid']
+    end
     if not options['image'].nil?
       full_post_id = FBCLI::publish_image args[0], options['image']
     else
