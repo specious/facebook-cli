@@ -100,10 +100,10 @@ module FBCLI
   
   def self.publish_post_group(msg, groupid)
     result = api_call lambda { |api|
-      api.put_connections(groupid,{:message => msg})
+      api.put_connections(groupid, "feed" ,{:message => msg})
     }
 
-    result['id']
+    result['post_id']
   end
 
   def self.publish_image(msg, image_file_or_url)
