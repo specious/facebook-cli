@@ -123,6 +123,8 @@ You should now be able to run *facebook-cli* from the `bin` directory:
 bin/facebook-cli
 ```
 
+*facebook-cli* depends on the [Koala](https://github.com/arsduo/koala) library for interfacing with Facebook's Graph API and [GLI](https://github.com/davetron5000/gli) for parsing command line arguments.
+
 Using a ruby environment manager such as [rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io) is advisable to avoid environment conflicts between projects.
 
 Please read the guide on [how to contribute](CONTRIBUTING.md).

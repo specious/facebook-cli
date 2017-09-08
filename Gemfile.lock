@@ -1,11 +1,11 @@
 PATH
   remote: .
   specs:
-    facebook-cli (1.5.5)
+    facebook-cli (1.5.6)
       gli (~> 2.14)
       json (~> 2.0)
       jsonpath (~> 0.5)
-      koala (~> 2.2)
+      koala (~> 3.0)
 
 GEM
   remote: https://rubygems.org/
@@ -18,9 +18,10 @@ GEM
     json (2.1.0)
     jsonpath (0.8.7)
       multi_json
-    koala (2.5.0)
+    koala (3.0.0)
       addressable
       faraday
+      json (>= 1.8)
     multi_json (1.12.2)
     multipart-post (2.0.0)
     public_suffix (3.0.0)
