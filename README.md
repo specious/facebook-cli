@@ -92,6 +92,8 @@ Use a Markdown renderer to easily convert the output to an HTML document.  For e
 facebook-cli likes | pandoc -s -f markdown_github > likes.html
 ```
 
+See: [example](https://specious.github.io/facebook-cli/likes.html)
+
 ## Why can't I...?
 
 Facebook has removed a large portion of their Graph API starting with version 2.0. [Niraj Shah](https://github.com/niraj-shah) has done a fantastic job documenting the cutbacks and their implications in these blog posts:
