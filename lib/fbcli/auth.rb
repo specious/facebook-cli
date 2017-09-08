@@ -11,10 +11,14 @@ module FBCLI
       "&redirect_uri=http://localhost:#{port}/" +
       "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events,publish_actions"
 
-    puts "Please open: #{uri}"
-    puts
-    puts "Waiting for authorization code on port #{port}..."
-    puts
+    puts <<-EOM
+Request permission to use the Facebook API by opening this link in your browser:
+
+#{uri}
+
+Waiting for authorization code on port #{port}...
+
+    EOM
 
     server = WEBrick::HTTPServer.new(
       :Port => port,

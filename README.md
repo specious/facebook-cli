@@ -1,6 +1,6 @@
 # Facebook CLI
 
-Discover new Facebook functionality from the command line.
+Facebook functionality from the command line.
 
 ## Demo
 
@@ -10,9 +10,9 @@ Discover new Facebook functionality from the command line.
 
 `gem install facebook-cli` *(might require sudo)*
 
-## Facebook configuration
+## Facebook setup
 
-To interact with the Facebook API you must create and configure a new Facebook application for your personal use.
+To interact with the Facebook API you must create and configure a Facebook application for your personal use.
 
 - Go to https://developers.facebook.com/apps and click "Add a New App"
 - Go to the "Settings" tab
@@ -36,15 +36,14 @@ See: [detailed instructions with screenshots](doc/configuration.md)
 
 ## Logging in
 
-Once configured, you must log into Facebook with your credentials to authorize *facebook-cli* to interact with your profile.
+Once the [Facebook app is configured](#facebook-setup), you must authorize it to access the social graph as you.
 
-- Open a terminal
-  - Run `facebook-cli login`
-  - Open the URL in a web browser, and log into your Facebook account if prompted
-  - Click "Continue" to approve the permissions
-  - Select the scope of your audience for any posts you publish using this application ([read more](https://www.facebook.com/help/211513702214269))
-  - Click "Ok" to continue
-  - Close the browser tab
+- In a terminal, run: `facebook-cli login`
+- Open the given URL in a web browser, and log into your Facebook account if prompted
+- Click "Continue" to approve the permissions
+- Select the scope of your audience for any posts you publish using this application ([read more](https://www.facebook.com/help/211513702214269))
+- Click "Ok" to continue
+- Close the browser tab
 
 See: [detailed instructions with screenshots](doc/configuration.md#logging-in)
 
@@ -83,11 +82,11 @@ COMMANDS
     videosof   - List videos you are tagged in
 ```
 
-Running ```facebook-cli help <command>``` may reveal more details.
+Run ```facebook-cli help <command>``` for more details on each command.
 
 ## Converting output to HTML
 
-The output can easily be converted to an HTML document using a Markdown renderer.  For example, with [Pandoc](http://pandoc.org/):
+Use a Markdown renderer to easily convert the output to an HTML document.  For example, using [Pandoc](http://pandoc.org):
 
 ```
 facebook-cli likes | pandoc -s -f markdown_github > likes.html
@@ -101,22 +100,30 @@ Facebook has removed a large portion of their Graph API starting with version 2.
 * [Facebook Announces Graph API v2.3, More Deprecations](https://www.webniraj.com/2015/03/26/facebook-announces-graph-api-v2-3-more-deprecations/)
 * [Facebook API: Getting Friends Using Graph API 2.0 and PHP SDK 4.0.x](https://www.webniraj.com/2014/06/12/facebook-api-getting-friends-using-graph-api-2-0-and-php-sdk-4-0-x/)
 
-In an [article](https://developers.facebook.com/blog/post/2012/10/10/growing-quality-apps-with-open-graph/) published in October, 2012, Facebook developer [Henry Zhang](https://www.facebook.com/hzz) wrote:
+An [article](https://developers.facebook.com/blog/post/2012/10/10/growing-quality-apps-with-open-graph/) published in October, 2012 by Facebook developer [Henry Zhang](https://www.facebook.com/hzz) provides insight into the reasoning:
 
 > Post to friends wall via the API generate a high levels of negative user feedback, including “Hides” and “Mark as Spam" and so we are removing it from the API. If you want to allow people to post to their friend’s timeline from your app, you can invoke the feed dialog.
 
-With so much functionality removed, it's not possible to build a full-featured interface to Facebook through the API.
+The functionality removed renders it impossible to build a full-featured interface to Facebook through the Graph API alone.
 
-If you can get a feature to work, please [contribute](CONTRIBUTING.md).
+If you expand the functionality, please [open a pull request](https://github.com/specious/facebook-cli/pulls).
 
 ## Development
 
-Install dependencies with [Bundler](http://bundler.io/):
+Clone this repository, then install Ruby dependencies with [Bundler](http://bundler.io):
 
 ```
 gem install bundler
 bundle install
 ```
+
+You should now be able to run *facebook-cli* from the `bin` directory:
+
+```
+bin/facebook-cli
+```
+
+Using a ruby environment manager such as [rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io) is advisable to avoid environment conflicts between projects.
 
 Please read the guide on [how to contribute](CONTRIBUTING.md).
 

@@ -42,7 +42,8 @@ def save_config
 end
 
 pre do |global_options, command|
-  $global_options = global_options # They're supposed to be global, right?
+  # Make options officially global
+  $global_options = global_options
 
   # Exit gracefully when terminating due to a broken pipe
   Signal.trap "PIPE", "SYSTEM_DEFAULT" if Signal.list.include? "PIPE"
@@ -56,26 +57,7 @@ pre do |global_options, command|
       exit_now! <<-EOM
 It looks like you are running #{APP_NAME} for the first time.
 
-To interact with the Facebook API you must create and configure
-a new Facebook application for your personal use.
-
-- Create a new application at: https://developers.facebook.com/apps
-- In the Settings tab:
-  - Click "Add Platform" and select "Website"
-  - Set "Site URL" to "http://localhost"
-  - Under "App Domains" add "localhost"
-  - Click "Save"
-- In the "App Review" tab:
-  - Flip the switch to make your app live
-- In the "Dashboard" tab:
-  - Click "Show" to reveal your app secret
-  - Save the App ID and App Secret by running:
-
-    #{APP_NAME} config --appid=<app-id> --appsecret=<app-secret>
-
-After that, acquire an access token by running:
-
-    #{APP_NAME} login
+Run `#{APP_NAME} config` for setup instructions.
       EOM
     end
   end
@@ -96,11 +78,38 @@ on_error do |exception|
   false
 end
 
-desc "Save Facebook application ID and secret"
+# Update instructions in README.md when these change
+SETUP_INSTRUCTIONS = <<-EOM
+You must create and configure a Facebook application to interact with the Graph API.
+
+- Create a new application at: https://developers.facebook.com/apps
+- In the Settings tab:
+  - Click "Add Platform" and select "Website"
+  - Set "Site URL" to "http://localhost"
+  - Under "App Domains" add "localhost"
+  - Click "Save"
+- In the "App Review" tab:
+  - Flip the switch to make your app live
+- In the "Dashboard" tab:
+  - Click "Show" to reveal your app secret
+  - Save the App ID and App Secret by running:
+
+    #{APP_NAME} config --appid=<app-id> --appsecret=<app-secret>
+
+Obtain an access token by running:
+
+    #{APP_NAME} login
+EOM
+
+desc "Save your Facebook API credentials"
 command :config do |c|
-  c.flag [:appid], :desc => 'Facebook application ID', :required => true
-  c.flag [:appsecret], :desc => 'Facebook application secret', :required => true
+  c.flag [:appid], :desc => 'Facebook application ID', :default_value => ""
+  c.flag [:appsecret], :desc => 'Facebook application secret', :default_value => ""
   c.action do |global_options, options|
+    if options['appid'].empty? or options['appsecret'].empty?
+      exit_now! SETUP_INSTRUCTIONS
+    end
+
     $config['app_id'] = options['appid'].to_i
     $config['app_secret'] = options['appsecret']
 
@@ -108,11 +117,11 @@ command :config do |c|
 
     puts "Configuration saved to #{CONFIG_FILE}"
     puts
-    puts "To acquire a Facebook access token, run: #{APP_NAME} login"
+    puts "To obtain a Facebook access token, run: #{APP_NAME} login"
   end
 end
 
-desc "Log into Facebook and receive an access token"
+desc "Request Facebook permissions and receive an API access token"
 command :login do |c|
   c.flag [:port], :desc => 'Local TCP port to serve Facebook login redirect page', :default_value => '3333'
   c.switch [:info], :desc => 'Show information about the current access token and exit', :negatable => false

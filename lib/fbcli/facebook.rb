@@ -5,7 +5,11 @@ module FBCLI
 
   def self.init_api
     if $config['access_token'].nil? or $config['access_token'].empty?
-      exit_now! "You must first acquire an access token; run: #{APP_NAME} login"
+      exit_now! <<-EOM
+Obtain an access token to interact with the Facebook API.
+
+Run: #{APP_NAME} login
+      EOM
     end
 
     Koala::Facebook::API.new($config['access_token'])
