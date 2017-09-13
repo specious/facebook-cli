@@ -131,10 +131,17 @@ Using a ruby environment manager such as [rbenv](https://github.com/rbenv/rbenv)
 
 Please read the guide on [how to contribute](CONTRIBUTING.md).
 
-## Other applications
+## Facebook client software in the open source community
+
+Applications:
 
 - [fb-messenger-cli](https://github.com/Alex-Rose/fb-messenger-cli)
 - [Messenger for Desktop](https://github.com/Aluxian/Messenger-for-Desktop)
+
+Libraries:
+
+- [Koala](https://github.com/arsduo/koala/) (Ruby)
+- [facebook-node-sdk](https://github.com/node-facebook/facebook-node-sdk) (JavaScript)
 
 ## License
 
