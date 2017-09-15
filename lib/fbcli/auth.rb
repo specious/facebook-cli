@@ -9,7 +9,7 @@ module FBCLI
   def self.listen_for_auth_code(port, app_id, app_secret)
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
       "&redirect_uri=http://localhost:#{port}/" +
-      "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events,publish_actions"
+      "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events,publish_actions,user_managed_groups,user_events"
 
     puts <<-EOM
 Request permission to use the Facebook API by opening this link in your browser:

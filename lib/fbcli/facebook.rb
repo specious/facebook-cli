@@ -117,4 +117,13 @@ Run: #{APP_NAME} login
 
     result['id']
   end
+  
+    def self.publish_group(id , msg)
+        result = api_call lambda { |api| 
+            api.put_connections(id, "feed", {:message => msg})
+    }
+        
+    result['id']        
+    end
+    
 end
