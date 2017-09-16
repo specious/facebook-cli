@@ -135,8 +135,9 @@ Please read the guide on [how to contribute](CONTRIBUTING.md).
 
 Applications:
 
-- [fb-messenger-cli](https://github.com/Alex-Rose/fb-messenger-cli)
-- [Messenger for Desktop](https://github.com/Aluxian/Messenger-for-Desktop)
+- [vhpoet/facebook-cli](https://github.com/vhpoet/facebook-cli) (Facebook CLI written in NodeJS)
+- [fb-messenger-cli](https://github.com/Alex-Rose/fb-messenger-cli) (Facebook Messenger for the terminal)
+- [Messenger for Desktop](https://github.com/Aluxian/Messenger-for-Desktop) (Facebook Messenger standalone app)
 
 Libraries:
 
