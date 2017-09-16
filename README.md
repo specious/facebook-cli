@@ -23,7 +23,7 @@ To interact with the Facebook API you must create and configure a Facebook appli
   - Click "Save Changes"
 - Go to the "App Review" tab
   - Flip the switch that says "Your app is in **development** and unavailable to the public."
-  - Click "Confirm" to make your app live ([why?](# "This is required for any content you publish through this app to be visible to other users."))
+  - Click "Confirm" to make your app live (this is required for any content you publish through this app to be visible to other users)
 - Go to the "Dashboard" tab
   - Under "App Secret" click "Show" to reveal your app secret
   - Open a terminal and save your App ID and App Secret by running:<br>
@@ -51,7 +51,7 @@ See: [detailed instructions with screenshots](doc/configuration.md#logging-in)
 
 ```
 facebook-cli login
-facebook-cli likes
+facebook-cli me
 ```
 
 ## Commands
@@ -61,23 +61,24 @@ Running ```facebook-cli help``` shows the list of available commands:
 ```
 COMMANDS
     api        - Make a Facebook API request
-    config     - Save Facebook application ID and secret
+    config     - Save your Facebook API credentials
     event      - Show event details
     events     - List your upcoming events
-    feed       - List the posts on your profile
-    friends    - List the people you are friends with (some limitations)
+    feed       - List posts on your profile
+    friends    - List people you are friends with (some limitations)
     help       - Shows a list of commands or help for one command
-    likes      - List the pages you have 'Liked'
+    likes      - List pages you have 'Liked'
     links      - Some useful URLs
-    login      - Log into Facebook and receive an access token
+    login      - Request Facebook permissions and receive an API access token
     logout     - Deauthorize your access token
     me         - Show your profile information
     pastevents - List your past events
     photos     - List photos you have uploaded
     photosof   - List photos you are tagged in
-    post       - Post a message or image to your timeline
-    postlink   - Post a link to your timeline
-    postvideo  - Post a video to your timeline
+    post       - Post a message or image to your timeline, a page or a group
+    postlink   - Post a link to your timeline, a page or a group
+    postvideo  - Post a video to your timeline, a page or a group
+    tagged     - List stories you are tagged in
     videos     - List videos you have uploaded
     videosof   - List videos you are tagged in
 ```
@@ -112,7 +113,7 @@ If you expand the functionality, please [open a pull request](https://github.com
 
 ## Development
 
-Clone this repository, then install Ruby dependencies with [Bundler](http://bundler.io):
+Clone this repository, then use [Bundler](http://bundler.io) to install Ruby dependencies:
 
 ```
 gem install bundler

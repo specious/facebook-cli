@@ -259,28 +259,32 @@ command :links do |c|
   end
 end
 
-desc "Post a message or image to your timeline"
+TO_FLAG_DESC = 'ID or alias of page or group to post to (use "me" for timeline)'
+TO_COMMAND_DESC = 'to your timeline, a page or a group'
+
+desc "Post a message or image " + TO_COMMAND_DESC
 arg_name "message"
 long_desc %(
-  Facebook advises: photos should be less than 4 MB and saved as JPG, PNG, GIF or TIFF files.
+  Facebook recommends: photos should be less than 4 MB and saved as JPG, PNG, GIF or TIFF files.
 )
 command :post do |c|
+  c.flag [:to], :desc => TO_FLAG_DESC, :default_value => 'me'
   c.flag [:i, :image], :desc => 'File or URL of image to post'
   c.action do |global_options, options, args|
     if not options['image'].nil?
-      full_post_id = FBCLI::publish_image args[0], options['image']
+      full_post_id = FBCLI::publish_image options['to'], args[0], options['image']
     else
-      full_post_id = FBCLI::publish_post args[0]
+      full_post_id = FBCLI::publish_post options['to'], args[0]
     end
 
     puts "Your post: #{link_to_post full_post_id}"
   end
 end
 
-desc "Post a video to your timeline"
+desc "Post a video " + TO_COMMAND_DESC
 arg_name "message"
 long_desc %(
-  Facebook advises: aspect ratio must be between 9x16 and 16x9. The following formats are
+  Facebook recommends: aspect ratio must be between 9x16 and 16x9. The following formats are
   supported:
 
   3g2, 3gp, 3gpp, asf, avi, dat, divx, dv, f4v, flv, m2ts, m4v,
@@ -288,10 +292,11 @@ long_desc %(
   ts, vob, and wmv
 )
 command :postvideo do |c|
+  c.flag [:to], :desc => TO_FLAG_DESC, :default_value => 'me'
   c.flag [:v, :video], :desc => 'File or URL of video'
   c.flag [:t, :title], :desc => 'Title'
   c.action do |global_options, options, args|
-    video_id = FBCLI::publish_video args[0], options['video'], options['title']
+    video_id = FBCLI::publish_video options['to'], args[0], options['video'], options['title']
     puts "Your post: #{link video_id}"
     puts "Edit your video: #{link "video/edit/?v=#{video_id}"}"
     puts
@@ -299,9 +304,10 @@ command :postvideo do |c|
   end
 end
 
-desc "Post a link to your timeline"
+desc "Post a link " + TO_COMMAND_DESC
 arg_name "url"
 command :postlink do |c|
+  c.flag [:to], :desc => TO_FLAG_DESC, :default_value => 'me'
   c.flag [:m, :message], :desc => 'Main message'
   c.flag [:n, :name], :desc => 'Link name'
   c.flag [:d, :description], :desc => 'Link description'
@@ -316,7 +322,7 @@ command :postlink do |c|
       "picture" => options['image']
     }
 
-    full_post_id = FBCLI::publish_post options['message'], link_metadata
+    full_post_id = FBCLI::publish_post options['to'], options['message'], link_metadata
 
     puts "Your post: #{link_to_post full_post_id}"
   end
