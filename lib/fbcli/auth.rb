@@ -4,7 +4,7 @@ require 'webrick'
 require 'json'
 
 module FBCLI
-  API_VERSION = "2.8"
+  API_VERSION = "2.10"
 
   def self.listen_for_auth_code(port, app_id, app_secret)
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
@@ -12,11 +12,11 @@ module FBCLI
       "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events,publish_actions"
 
     puts <<-EOM
-Request permission to use the Facebook API by opening this link in your browser:
+Open this URL in a web browser and allow access to the Facebook Graph on behalf of your user account:
 
 #{uri}
 
-Waiting for authorization code on port #{port}...
+Waiting to receive authorization code on port #{port}...
 
     EOM
 
@@ -36,7 +36,6 @@ Waiting for authorization code on port #{port}...
         access_token = get_access_token(port, app_id, value, app_secret)
       else
         puts "Received unexpected request: #{req.query_string}"
-        # TODO: Handle forseeable cases
       end
 
       res.body = 'You may now close this window.'
@@ -46,7 +45,7 @@ Waiting for authorization code on port #{port}...
     # Allow CTRL+C intervention
     trap 'INT' do server.shutdown end
 
-    # This thread will block execution until server shuts down
+    # Block execution on this thread until server shuts down
     server.start
 
     # Return access token
