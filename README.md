@@ -14,24 +14,20 @@ Facebook functionality from the command line.
 
 To interact with the Facebook API you must create and configure a Facebook application for your personal use.
 
-- Go to https://developers.facebook.com/apps and click "Add a New App" ([screenshot](doc/images/initial-configuration/create-new-app.png))
-- In the "Settings" tab:
-  - Add `localhost` to the "App Domains" ([screenshot](doc/images/initial-configuration/add-localhost-to-app-domains.png))
-  - Select a "Category" (any one will do)
-  - Click "Add Platform"
-  - Select "Website" ([screenshot](doc/images/initial-configuration/select-platform.png))
-  - Set "Site URL" to `http://localhost/` ([screenshot](doc/images/initial-configuration/set-site-url-to-localhost.png))
-  - Click "Save Changes" ([screenshot](doc/images/initial-configuration/changes-saved.png))
+- Go to https://developers.facebook.com/apps and create a new app ([screenshot](doc/images/initial-configuration/create-new-app.png))
 - Under "PRODUCTS" in the left sidebar:
   - Click "+ Add Product"
-  - Under "Client OAuth Settings", set "Use Strict Mode for Redirect URIs" to "No"
+  - Choose "Facebook Login" by clicking its "Set Up" button
+  - Don't bother choosing a platform, instead click "Settings" under "Facebook Login" in the side bar
+  - Under "Client OAuth Settings", switch "Use Strict Mode for Redirect URIs" to "No"
   - Under "Valid OAuth redirect URIs", add: `http://localhost:3333/`
   - Click "Save Changes"
 - In the "App Review" tab:
   - Flip the switch that says "Your app is in **development** and unavailable to the public." ([screenshot](doc/images/initial-configuration/make-public-switch.png))
+  - Choose a category (any one will do)
   - Click "Confirm" to make your app live (this is required for any content you publish through this app to be visible to other users) ([screenshot](doc/images/initial-configuration/make-app-public.png))
-- Go to the "Dashboard" tab
-  - Under "App Secret" click "Show" to reveal your app secret ([screenshot](doc/images/initial-configuration/show-app-secret.png) [screenshot](doc/images/initial-configuration/app-secret-revealed.png))
+- In the "Dashboard" tab:
+  - Under "App Secret" click "Show" to reveal your app secret
   - Open a terminal and save your App ID and App Secret by running: ([screenshot](doc/images/initial-configuration/save-app-id-and-app-secret.png))<br>
 
     ```
@@ -52,13 +48,12 @@ Once the [Facebook app is configured](#facebook-setup), you must authorize it to
 ## Run
 
 ```
-facebook-cli login
-facebook-cli me
+facebook-cli friends
 ```
 
 ## Commands
 
-Running ```facebook-cli help``` shows the list of available commands:
+Running `facebook-cli` or `facebook-cli help` shows the list of available commands:
 
 ```
 COMMANDS
@@ -85,7 +80,7 @@ COMMANDS
     videosof   - List videos you are tagged in
 ```
 
-Run ```facebook-cli help <command>``` for more details on each command.
+Run `facebook-cli help <command>` for more details on each command.
 
 ## Converting output to HTML
 

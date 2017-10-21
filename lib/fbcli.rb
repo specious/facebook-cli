@@ -83,19 +83,17 @@ SETUP_INSTRUCTIONS = <<-EOM
 You must create and configure a Facebook application to interact with the Graph API.
 
 - Create a new application at: https://developers.facebook.com/apps
-- In the Settings tab:
-  - Under "App Domains" add "localhost"
-  - Select a "Category" (any one will do)
-  - Click "Add Platform" and select "Website"
-  - Set "Site URL" to "http://localhost/"
-  - Click "Save Changes"
 - Under "PRODUCTS" in the left sidebar:
   - Click "+ Add Product"
-  - Under "Client OAuth Settings", set "Use Strict Mode for Redirect URIs" to "No"
+  - Choose "Facebook Login" by clicking its "Set Up" button
+  - Don't bother choosing a platform, instead click "Settings" under "Facebook Login" in the side bar
+  - Under "Client OAuth Settings", switch "Use Strict Mode for Redirect URIs" to "No"
   - Under "Valid OAuth redirect URIs", add: "http://localhost:3333/"
   - Click "Save Changes"
 - In the "App Review" tab:
   - Flip the switch to make your app live
+  - Choose a category (any one will do)
+  - Click "Confirm"
 - In the "Dashboard" tab:
   - Click "Show" to reveal your app secret
   - Save the App ID and App Secret by running:
