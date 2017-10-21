@@ -15,13 +15,19 @@ Facebook functionality from the command line.
 To interact with the Facebook API you must create and configure a Facebook application for your personal use.
 
 - Go to https://developers.facebook.com/apps and click "Add a New App" ([screenshot](doc/images/initial-configuration/create-new-app.png))
-- Go to the "Settings" tab
+- In the "Settings" tab:
+  - Add `localhost` to the "App Domains" ([screenshot](doc/images/initial-configuration/add-localhost-to-app-domains.png))
+  - Select a "Category" (any one will do)
   - Click "Add Platform"
   - Select "Website" ([screenshot](doc/images/initial-configuration/select-platform.png))
-  - Set "Site URL" to `http://localhost` ([screenshot](doc/images/initial-configuration/set-site-url-to-localhost.png))
-  - Add `localhost` to the "App Domains" ([screenshot](doc/images/initial-configuration/add-localhost-to-app-domains.png))
+  - Set "Site URL" to `http://localhost/` ([screenshot](doc/images/initial-configuration/set-site-url-to-localhost.png))
   - Click "Save Changes" ([screenshot](doc/images/initial-configuration/changes-saved.png))
-- Go to the "App Review" tab
+- Under "PRODUCTS" in the left sidebar:
+  - Click "+ Add Product"
+  - Under "Client OAuth Settings", set "Use Strict Mode for Redirect URIs" to "No"
+  - Under "Valid OAuth redirect URIs", add: `http://localhost:3333/`
+  - Click "Save Changes"
+- In the "App Review" tab:
   - Flip the switch that says "Your app is in **development** and unavailable to the public." ([screenshot](doc/images/initial-configuration/make-public-switch.png))
   - Click "Confirm" to make your app live (this is required for any content you publish through this app to be visible to other users) ([screenshot](doc/images/initial-configuration/make-app-public.png))
 - Go to the "Dashboard" tab
@@ -34,7 +40,7 @@ To interact with the Facebook API you must create and configure a Facebook appli
 
 ## Logging in
 
-Once the [Facebook app is configured](#facebook-setup), you must authorize it to access the social graph as you.
+Once the [Facebook app is configured](#facebook-setup), you must authorize it to access the social graph on your behalf.
 
 - In a terminal, run: `facebook-cli login` ([screenshot](doc/images/login-procedure/facebook-cli-login.png))
 - Open the given URL in a web browser, and log into your Facebook account if prompted

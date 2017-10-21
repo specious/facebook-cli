@@ -6,9 +6,11 @@ require 'json'
 module FBCLI
   API_VERSION = "2.10"
 
-  def self.listen_for_auth_code(port, app_id, app_secret)
+  def self.login(app_id, app_secret, local_port)
+    redirect_uri = "http://localhost:#{local_port}/"
+
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
-      "&redirect_uri=http://localhost:#{port}/" +
+      "&redirect_uri=#{redirect_uri}" +
       "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events,publish_actions"
 
     puts <<-EOM
@@ -16,12 +18,12 @@ Open this URL in a web browser and allow access to the Facebook Graph on behalf 
 
 #{uri}
 
-Waiting to receive authorization code on port #{port}...
+Waiting to receive authorization code on port #{local_port}...
 
     EOM
 
     server = WEBrick::HTTPServer.new(
-      :Port => port,
+      :Port => local_port,
       :SSLEnable => false,
       :Logger => WEBrick::Log.new(File.open(File::NULL, 'w')),
       :AccessLog => []
@@ -33,7 +35,10 @@ Waiting to receive authorization code on port #{port}...
       key, value = req.query_string.split '=', 2
 
       if key == "code"
-        access_token = get_access_token(port, app_id, value, app_secret)
+        puts "Received authorization code. Exchanging it for an access token..."
+        puts
+
+        access_token = get_access_token(app_id, value, app_secret, redirect_uri)
       else
         puts "Received unexpected request: #{req.query_string}"
       end
@@ -52,10 +57,15 @@ Waiting to receive authorization code on port #{port}...
     access_token
   end
 
-  def self.get_access_token(port, app_id, auth_code, app_secret)
+  def self.get_access_token(app_id, auth_code, app_secret, redirect_uri)
+    # The redirect_uri doesn't play the same role as in capturing the auth code, however
+    # it must match the one used in the previous case, otherwise the server will reject
+    # the request.
+    #
+    # See: https://www.oauth.com/oauth2-servers/access-tokens/authorization-code-request/
     auth_uri = "https://graph.facebook.com/v#{API_VERSION}/oauth/access_token?" +
       "client_id=#{app_id}" +
-      "&redirect_uri=http://localhost:#{port}/" +
+      "&redirect_uri=#{redirect_uri}" +
       "&client_secret=#{app_secret}" +
       "&code=#{auth_code}"
 

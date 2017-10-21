@@ -48,9 +48,9 @@ Run: #{APP_NAME} login
     }
   end
 
-  def self.request_token_info
+  def self.request_token_info(access_token = $config['access_token'])
     api_call lambda { |api|
-      api.debug_token $config['access_token'] do |res|
+      api.debug_token access_token do |res|
         yield res['data']
       end
     }

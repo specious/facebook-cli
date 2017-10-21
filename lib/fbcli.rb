@@ -16,7 +16,7 @@ program_desc "Facebook command line interface"
 version FBCLI::VERSION
 
 flag [:token], :desc => 'Provide Facebook access token', :required => false
-flag [:pages, :p], :desc => 'Max pages', :required => false, :type => Integer, :default_value => -1
+flag [:pages, :p], :desc => 'Maximum number of pages of results to retrieve', :required => false, :type => Integer, :default_value => -1
 
 def link(path)
   "https://www.facebook.com/#{path}"
@@ -84,10 +84,16 @@ You must create and configure a Facebook application to interact with the Graph 
 
 - Create a new application at: https://developers.facebook.com/apps
 - In the Settings tab:
-  - Click "Add Platform" and select "Website"
-  - Set "Site URL" to "http://localhost"
   - Under "App Domains" add "localhost"
-  - Click "Save"
+  - Select a "Category" (any one will do)
+  - Click "Add Platform" and select "Website"
+  - Set "Site URL" to "http://localhost/"
+  - Click "Save Changes"
+- Under "PRODUCTS" in the left sidebar:
+  - Click "+ Add Product"
+  - Under "Client OAuth Settings", set "Use Strict Mode for Redirect URIs" to "No"
+  - Under "Valid OAuth redirect URIs", add: "http://localhost:3333/"
+  - Click "Save Changes"
 - In the "App Review" tab:
   - Flip the switch to make your app live
 - In the "Dashboard" tab:
@@ -122,33 +128,58 @@ command :config do |c|
 end
 
 desc "Request Facebook permissions and receive an API access token"
+long_desc %(
+  Print a URL that launches a request to Facebook to allow the app you've created (by
+  following the setup instructions) to perform Facebook Graph actions on your behalf,
+  and start an HTTP server to listen for the authorization code.
+
+  Upon receiving the authorization code, immediately trade it in for an access
+  token and save it to a configuration file.
+
+  See: https://www.oauth.com/oauth2-servers/access-tokens/
+
+  Attention: if you choose to listen for the authorization token on a port number
+  different from the default value, make sure that in your app settings the same
+  port is specified under:
+
+    PRODUCTS > Facebook Login > Client OAuth Settings > Valid OAuth redirect URIs
+)
 command :login do |c|
-  c.flag [:port], :desc => 'Local TCP port to serve Facebook login redirect page', :default_value => '3333'
+  c.flag [:port], :desc => 'Local TCP port to listen for authorization code', :default_value => '3333'
   c.switch [:info], :desc => 'Show information about the current access token and exit', :negatable => false
   c.action do |global_options, options|
     if options['info']
-      begin
-        FBCLI::request_token_info do |data|
-          puts "Your access token was issued on: #{date_str(data['issued_at'])}"
+      if $config['access_token'].nil?
+        puts "Either provide an access token via the --token parameter or obtain one by running:"
+        puts
+        puts "  #{APP_NAME} login"
+      else
+        begin
+          puts "Your access token: #{$config['access_token']}"
           puts
-          puts "It is valid until: #{date_str(data['expires_at'])}"
-          puts
-          puts "Permissions:\n  - #{data['scopes'].join("\n  - ")}"
+
+          FBCLI::request_token_info do |data|
+            puts "It was issued on: #{date_str(data['issued_at'])}"
+            puts
+            puts "It is valid until: #{date_str(data['expires_at'])}"
+            puts
+            puts "Permissions:\n  - #{data['scopes'].join("\n  - ")}"
+          end
+        rescue
+          puts "Your access token does not appear to be valid or may have expired."
         end
-      rescue
-        puts "Your access token does not appear to be valid for this application."
       end
     else
-      token = FBCLI::listen_for_auth_code(options['port'], $config['app_id'], $config['app_secret'])
+      token = FBCLI::login($config['app_id'], $config['app_secret'], options['port'])
 
       if not token.nil?
         $config['access_token'] = token
 
         save_config
 
-        puts "Your access token: #{token}"
+        puts "Your access token has been saved to #{CONFIG_FILE}"
         puts
-        puts "To find out when it is scheduled to expire, run:"
+        puts "To see it and find out when it is scheduled to expire, run:"
         puts
         puts "  #{APP_NAME} login --info"
         puts
