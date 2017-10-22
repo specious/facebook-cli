@@ -2,9 +2,9 @@ require 'gli'
 require 'yaml'
 require 'json'
 require 'jsonpath'
+require 'fbcli/api'
 require 'fbcli/auth'
 require 'fbcli/version'
-require 'fbcli/facebook'
 
 APP_NAME    = File.basename($0, File.extname($0))
 CONFIG_FILE = File.join(ENV['HOME'], ".#{APP_NAME}rc")
