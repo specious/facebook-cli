@@ -6,8 +6,8 @@ require 'json'
 module FBCLI
   API_VERSION = "2.10"
 
-  def self.login(app_id, app_secret, local_port)
-    redirect_uri = "http://localhost:#{local_port}/"
+  def self.login(app_id, app_secret, local_host, local_port)
+    redirect_uri = "http://#{local_host}:#{local_port}/"
 
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
       "&redirect_uri=#{redirect_uri}" +

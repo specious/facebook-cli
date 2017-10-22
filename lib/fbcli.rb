@@ -89,6 +89,7 @@ You must create and configure a Facebook application to interact with the Graph 
   - Don't bother choosing a platform, instead click "Settings" under "Facebook Login" in the side bar
   - Under "Client OAuth Settings", switch "Use Strict Mode for Redirect URIs" to "No"
   - Under "Valid OAuth redirect URIs", add: "http://localhost:3333/"
+      (or your host identifier and port number, to receive auth code during authentication)
   - Click "Save Changes"
 - In the "App Review" tab:
   - Flip the switch to make your app live
@@ -103,6 +104,10 @@ You must create and configure a Facebook application to interact with the Graph 
 Obtain an access token by running:
 
     #{APP_NAME} login
+
+If authenticating on a remote machine or using a different port to receive the auth code:
+
+    #{APP_NAME} login --host <hostname-or-ip> --port <port>
 EOM
 
 desc "Save your Facebook API credentials"
@@ -137,12 +142,14 @@ long_desc %(
   See: https://www.oauth.com/oauth2-servers/access-tokens/
 
   Attention: if you choose to listen for the authorization token on a port number
-  different from the default value, make sure that in your app settings the same
-  port is specified under:
+  different from the default value or your host identifier is different from
+  "localhost", make sure that in your app settings the same host and port are
+  specified under:
 
-    PRODUCTS > Facebook Login > Client OAuth Settings > Valid OAuth redirect URIs
+  - PRODUCTS > Facebook Login > Client OAuth Settings > Valid OAuth redirect URIs
 )
 command :login do |c|
+  c.flag [:host], :desc => 'This machine\'s host identifier (host name or IP address)', :default_value => 'localhost'
   c.flag [:port], :desc => 'Local TCP port to listen for authorization code', :default_value => '3333'
   c.switch [:info], :desc => 'Show information about the current access token and exit', :negatable => false
   c.action do |global_options, options|
@@ -168,7 +175,7 @@ command :login do |c|
         end
       end
     else
-      token = FBCLI::login($config['app_id'], $config['app_secret'], options['port'])
+      token = FBCLI::login($config['app_id'], $config['app_secret'], options['host'], options['port'])
 
       if not token.nil?
         $config['access_token'] = token

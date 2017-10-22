@@ -20,7 +20,7 @@ To interact with the Facebook API you must create and configure a Facebook appli
   - Choose "Facebook Login" by clicking its "Set Up" button
   - Don't bother choosing a platform, instead click "Settings" under "Facebook Login" in the side bar
   - Under "Client OAuth Settings", switch "Use Strict Mode for Redirect URIs" to "No"
-  - Under "Valid OAuth redirect URIs", add: `http://localhost:3333/`
+  - Under "Valid OAuth redirect URIs", add: `http://localhost:3333/` (or your host identifier and port number, to receive auth code during authentication)
   - Click "Save Changes"
 - In the "App Review" tab:
   - Flip the switch that says "Your app is in **development** and unavailable to the public." ([screenshot](doc/images/initial-configuration/make-public-switch.png))
@@ -39,6 +39,7 @@ To interact with the Facebook API you must create and configure a Facebook appli
 Once the [Facebook app is configured](#facebook-setup), you must authorize it to access the social graph on your behalf.
 
 - In a terminal, run: `facebook-cli login` ([screenshot](doc/images/login-procedure/facebook-cli-login.png))
+  - (If authenticating on a remote machine or using a different port to receive the auth code: `facebook-cli login --host <hostname-or-ip> --port <port>`)
 - Open the given URL in a web browser, and log into your Facebook account if prompted
 - Click "Continue" to approve the permissions ([screenshot](doc/images/login-procedure/approve-permissions.png))
 - Select the scope of your audience for any posts you publish using this application ([screenshot](doc/images/login-procedure/set-visibility.png)) ([read more](https://www.facebook.com/help/211513702214269))
