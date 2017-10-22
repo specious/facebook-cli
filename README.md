@@ -93,6 +93,20 @@ facebook-cli likes | pandoc -s -f markdown_github > likes.html
 
 See: [example](https://specious.github.io/facebook-cli/likes.html)
 
+## Things made with the help of facebook-cli
+
+- [Facebook Friends](https://github.com/specious/facebook-friends/) - Build a page that lets you click your friends' profile pictures to jump to their timelines
+
+  <a href="https://specious.github.io/facebook-friends/"><img src="https://github.com/specious/facebook-friends/raw/master/screenshot.png" width="400"></a>
+
+- [Facebook Browser](https://github.com/specious/facebook-browser/) - Build a searchable index of all the Facebook pages you follow
+
+  <a href="https://specious.github.io/facebook-browser/"><img src="https://github.com/specious/facebook-browser/raw/master/screenshot.png" width="400"></a>
+
+- [Screensaver](https://twitter.com/tknomad/status/815828633231257600) that prints the titles of all of your 'Liked' Facebook pages, made by using the output of `facebook-cli likes | awk 'NR % 3 == 1' | perl -p -e "s/\n/ - /"` as the text input to the [Phosphor](https://www.youtube.com/watch?v=G6ZWTrl7pV0) screensaver
+
+  <a href="https://twitter.com/tknomad/status/815828633231257600"><img src="https://pbs.twimg.com/media/C1JnVlpXEAQurZW.jpg" width="400"></a>
+
 ## Why can't I...?
 
 Facebook has removed a large portion of their Graph API starting with version 2.0. [Niraj Shah](https://github.com/niraj-shah) has done a fantastic job documenting the cutbacks and their implications in these blog posts:
