@@ -248,7 +248,11 @@ command :api do |c|
 
     # Nicely format JSON result if not --raw
     unless options['raw']
-      if res.class == Hash
+      # It appears that Hash and Koala::Facebook::API::GraphCollection objects
+      # are JSON, while Array results are not.
+      #
+      # TODO: This heuristic could stand to be revised or better documented
+      if res.class != Array
         res = JSON.pretty_generate res
       end
     end
