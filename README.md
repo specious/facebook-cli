@@ -12,14 +12,13 @@ Facebook functionality from the command line.
 
 ## Facebook setup
 
-To interact with the Facebook API you must create and configure a Facebook application for your personal use.
+To interact with the Facebook API you must create and configure a Facebook application for your personal use. Follow these instructions **extremely carefully**:
 
 - Go to https://developers.facebook.com/apps and create a new app ([screenshot](doc/images/initial-configuration/create-new-app.png))
 - Under "PRODUCTS" in the left sidebar:
   - Click "+ Add Product"
-  - Choose "Facebook Login" by clicking its "Set Up" button
-  - Don't bother choosing a platform, instead click "Settings" under "Facebook Login" in the side bar
-  - Under "Client OAuth Settings", switch "Use Strict Mode for Redirect URIs" to "No"
+  - Choose "Facebook Login" by hovering over it and clicking "Set Up"
+  - **Don't bother choosing a platform.** Instead click "Settings" under "Facebook Login" in the side bar
   - Under "Valid OAuth redirect URIs", add: `http://localhost:3333/` (or your host identifier and port number, to receive auth code during authentication)
   - Click "Save Changes"
 - In the "App Review" tab:
@@ -36,7 +35,7 @@ To interact with the Facebook API you must create and configure a Facebook appli
 
 ## Logging in
 
-Once the [Facebook app is configured](#facebook-setup), you must authorize it to access the social graph on your behalf.
+Once the [Facebook app is configured](#facebook-setup), you must authorize it to access the social graph on your behalf:
 
 - In a terminal, run: `facebook-cli login` ([screenshot](doc/images/login-procedure/facebook-cli-login.png))
   - (If authenticating on a remote machine or using a different port to receive the auth code: `facebook-cli login --host <hostname-or-ip> --port <port>`)
