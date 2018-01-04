@@ -4,6 +4,7 @@ Facebook functionality from the command line.
 
 [![Download the gem at https://rubygems.org/gems/facebook-cli](https://img.shields.io/gem/v/facebook-cli.svg)](https://rubygems.org/gems/facebook-cli)
 [![Join the chat at https://gitter.im/facebook-cli/discuss](https://badges.gitter.im/chat.svg)](https://gitter.im/facebook-cli/discuss)
+[![Take a moment to thank @specious](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/specious)
 
 ## Demo
 
