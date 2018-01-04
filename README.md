@@ -2,6 +2,9 @@
 
 Facebook functionality from the command line.
 
+[![Download the gem at https://rubygems.org/gems/facebook-cli](https://img.shields.io/gem/v/facebook-cli.svg)](https://rubygems.org/gems/facebook-cli)
+[![Join the chat at https://gitter.im/facebook-cli/discuss](https://badges.gitter.im/chat.svg)](https://gitter.im/facebook-cli/discuss)
+
 ## Demo
 
 <a href="https://asciinema.org/a/87129"><img src="https://asciinema.org/a/87129.png" width="400"/></a>
