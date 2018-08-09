@@ -1,17 +1,18 @@
 require 'net/http'
 require 'uri'
 require 'webrick'
+require 'webrick/https'
 require 'json'
 
 module FBCLI
-  API_VERSION = "2.10"
+  API_VERSION = "3.1"
 
   def self.login(app_id, app_secret, local_host, local_port)
-    redirect_uri = "http://#{local_host}:#{local_port}/"
+    redirect_uri = "https://#{local_host}:#{local_port}/"
 
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
       "&redirect_uri=#{redirect_uri}" +
-      "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events,publish_actions"
+      "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events"
 
     puts <<-EOM
 Open this URL in a web browser and allow access to the Facebook Graph on behalf of your user account:
@@ -24,10 +25,20 @@ Waiting to receive authorization code on port #{local_port}...
 
     server = WEBrick::HTTPServer.new(
       :Port => local_port,
-      :SSLEnable => false,
+      :SSLEnable => true,
+      :SSLCertName => [ %w[CN localhost] ],
       :Logger => WEBrick::Log.new(File.open(File::NULL, 'w')),
       :AccessLog => []
     )
+
+    # TODO: WEBrick generates a self-signed SSL certificate with serial number 1, which
+    #       causes Firefox to complain with SEC_ERROR_REUSED_ISSUER_AND_SERIAL on the
+    #       second authentication attempt.
+    #
+    #       See: https://github.com/ruby/webrick/blob/6e9081b/lib/webrick/ssl.rb#L112
+    #
+    #       Providing a self-signed certificate to WEBrick during instantiation is one
+    #       way to surmount this inconvenience.
 
     access_token = nil
 

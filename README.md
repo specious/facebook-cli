@@ -16,26 +16,21 @@ Facebook functionality from the command line.
 
 ## Facebook setup
 
-To interact with the Facebook API you must create and configure a Facebook application for your personal use. Follow these instructions **extremely carefully**:
+To interact with the Facebook API you must create and configure a Facebook application for your personal use. Follow these instructions carefully:
 
 - Go to https://developers.facebook.com/apps and create a new app ([screenshot](doc/images/initial-configuration/create-new-app.png))
-- Under "PRODUCTS" in the left sidebar:
-  - Click "+ Add Product"
-  - Choose "Facebook Login" by hovering over it and clicking "Set Up"
-  - **Don't bother choosing a platform.** Instead click "Settings" under "Facebook Login" in the side bar
-  - Under "Valid OAuth redirect URIs", add: `http://localhost:3333/` (or your host identifier and port number, to receive auth code during authentication)
-  - Click "Save Changes"
-- In the "App Review" tab:
-  - Flip the switch that says "Your app is in **development** and unavailable to the public." ([screenshot](doc/images/initial-configuration/make-public-switch.png))
-  - Choose a category (any one will do)
-  - Click "Confirm" to make your app live (this is required for any content you publish through this app to be visible to other users) ([screenshot](doc/images/initial-configuration/make-app-public.png))
-- In the "Dashboard" tab:
-  - Under "App Secret" click "Show" to reveal your app secret
-  - Open a terminal and save your App ID and App Secret by running: ([screenshot](doc/images/initial-configuration/save-app-id-and-app-secret.png))<br>
+- Set up a new "Facebook Login" product
+- **Don't bother choosing a platform.** Instead click "Settings" under "Facebook Login" in the side bar
+- Under "Valid OAuth redirect URIs", add: `https://localhost:3333/` (this is needed to receive auth code during authentication)
+- Click "Save Changes"
+- Go to "App Review" and make your app public
+- Go to "Settings" > "Basic"
+- Under "App Secret" click "Show" to reveal your app secret
+- Open a terminal and save your App ID and App Secret by running: ([screenshot](doc/images/initial-configuration/save-app-id-and-app-secret.png))<br>
 
-    ```
-    facebook-cli config --appid=<app-id> --appsecret=<app-secret>
-    ```
+  ```
+  facebook-cli config --appid=<app-id> --appsecret=<app-secret>
+  ```
 
 ## Logging in
 
@@ -47,13 +42,8 @@ Once the [Facebook app is configured](#facebook-setup), you must authorize it to
 - Click "Continue" to approve the permissions ([screenshot](doc/images/login-procedure/approve-permissions.png))
 - Select the scope of your audience for any posts you publish using this application ([screenshot](doc/images/login-procedure/set-visibility.png)) ([read more](https://www.facebook.com/help/211513702214269))
 - Click "Ok" to continue
+  - If you're using Firefox and you get a `SEC_ERROR_REUSED_ISSUER_AND_SERIAL` error, just copy the URL and run `curl -k <url>` in a terminal
 - Close the browser tab ([screenshot](doc/images/login-procedure/facebook-cli-logged-in.png))
-
-## Run
-
-```
-facebook-cli friends
-```
 
 ## Commands
 
@@ -96,7 +86,7 @@ facebook-cli likes | pandoc -s -f markdown_github > likes.html
 
 See: [example](https://specious.github.io/facebook-cli/likes.html)
 
-## Things made with the help of facebook-cli
+## Things created with facebook-cli
 
 - [Facebook Friends](https://github.com/specious/facebook-friends/) - Build a page that lets you click your friends' profile pictures to jump to their timelines
 

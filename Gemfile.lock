@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    facebook-cli (1.6.5)
+    facebook-cli (1.7.0)
       gli (~> 2.14)
       json (~> 2.0)
       jsonpath (~> 0.5)
@@ -12,19 +12,21 @@ GEM
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    faraday (0.13.1)
+    faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
-    gli (2.17.0)
+    gli (2.17.1)
     json (2.1.0)
-    jsonpath (0.8.10)
+    jsonpath (0.9.3)
       multi_json
+      to_regexp (~> 0.2.1)
     koala (3.0.0)
       addressable
       faraday
       json (>= 1.8)
-    multi_json (1.12.2)
+    multi_json (1.13.1)
     multipart-post (2.0.0)
-    public_suffix (3.0.0)
+    public_suffix (3.0.2)
+    to_regexp (0.2.1)
 
 PLATFORMS
   ruby
@@ -33,4 +35,4 @@ DEPENDENCIES
   facebook-cli!
 
 BUNDLED WITH
-   1.15.4
+   1.16.1
