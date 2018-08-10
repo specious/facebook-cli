@@ -42,7 +42,7 @@ def save_config
 end
 
 pre do |global_options, command|
-  # Make options officially global
+  # Make global options officially global
   $global_options = global_options
 
   # Exit gracefully when terminating due to a broken pipe
@@ -71,6 +71,7 @@ Run `#{APP_NAME} config` for setup instructions.
   true
 end
 
+# Trap exceptions bubbling up from GLI and provide an alternative handler
 on_error do |exception|
   puts exception.message
 
@@ -202,37 +203,42 @@ command :logout do |c|
   end
 end
 
-desc "Make a Facebook API request"
+desc "Make a direct Facebook API request"
 arg_name "request"
 long_desc %(
-  This is similar to the online tool:
-
-    https://developers.facebook.com/tools/explorer
-
   For example, try:
 
-    #{APP_NAME} api "165795193558366?fields=name,about,website"
+    #{APP_NAME} api "me?fields=name,email,birthday"
 
-  To view the list of valid fields you can request, ask for the metadata:
+  To view the list of fields that can be queried:
 
-    #{APP_NAME} api "165795193558366?metadata=1"
+    #{APP_NAME} api "me?metadata=1"
 
-  Moreover, you can extract a value from the response using --get. For example:
+  Retrieve a specific value using --get:
 
-    #{APP_NAME} api --get name 165795193558366
+    #{APP_NAME} api --get name me
 
-  Use JsonPath language to retrieve nested values. For example:
+  Retrieve nested values using the JsonPath query language:
 
-    #{APP_NAME} api --get "metadata.fields..name" "165795193558366?metadata=1"
-
-  Some valid requests may not be honored or return incomplete results due to
-  insufficient permissions, which were established during the authentication
-  process.
+    #{APP_NAME} api --get "metadata.fields..name" "me?metadata=1"
 )
 command :api do |c|
-  c.flag [:get], :desc => "Extract a particular value from the JSON response"
+  c.flag [:get], :desc => "Extract a value from the JSON response by means of a JsonPath query"
   c.switch [:raw], :desc => 'Output unformatted JSON', :negatable => false
   c.action do |global_options, options, args|
+    # If no query provided, offer guidance
+    if args[0].nil? || args[0].empty?
+      # TODO: Show usage instructions
+      #
+      #  GLI provides a function help_now! which normally prints usage instructions and exits,
+      #  however the way it triggers that eventuality is by raising an option parser exception,
+      #  which in turn results in the default handler printing usage instructions. Unfortunately,
+      #  since facebook-cli provides an alternative exception handler and breaks that functionality,
+      #  it will take further engineering to effect the desired behavior.
+
+      exit_now! "See documentation: #{APP_NAME} help api"
+    end
+
     res = FBCLI::raw_request args[0]
 
     # Extract value(s) using JsonPath
@@ -246,7 +252,7 @@ command :api do |c|
       end
     end
 
-    # Nicely format JSON result if not --raw
+    # Nicely format JSON result if --raw flag is not set
     unless options['raw']
       # It appears that Hash and Koala::Facebook::API::GraphCollection objects
       # are JSON, while Array results are not.
@@ -299,75 +305,6 @@ command :links do |c|
   end
 end
 
-TO_FLAG_DESC = 'ID or alias of page or group to post to (use "me" for timeline)'
-TO_COMMAND_DESC = 'to your timeline, a page or a group'
-
-desc "Post a message or image " + TO_COMMAND_DESC
-arg_name "message"
-long_desc %(
-  Facebook recommends: photos should be less than 4 MB and saved as JPG, PNG, GIF or TIFF files.
-)
-command :post do |c|
-  c.flag [:to], :desc => TO_FLAG_DESC, :default_value => 'me'
-  c.flag [:i, :image], :desc => 'File or URL of image to post'
-  c.action do |global_options, options, args|
-    if not options['image'].nil?
-      full_post_id = FBCLI::publish_image options['to'], args[0], options['image']
-    else
-      full_post_id = FBCLI::publish_post options['to'], args[0]
-    end
-
-    puts "Your post: #{link_to_post full_post_id}"
-  end
-end
-
-desc "Post a video " + TO_COMMAND_DESC
-arg_name "message"
-long_desc %(
-  Facebook recommends: aspect ratio must be between 9x16 and 16x9. The following formats are
-  supported:
-
-  3g2, 3gp, 3gpp, asf, avi, dat, divx, dv, f4v, flv, m2ts, m4v,
-  mkv, mod, mov, mp4, mpe, mpeg, mpeg4, mpg, mts, nsv, ogm, ogv, qt, tod,
-  ts, vob, and wmv
-)
-command :postvideo do |c|
-  c.flag [:to], :desc => TO_FLAG_DESC, :default_value => 'me'
-  c.flag [:v, :video], :desc => 'File or URL of video'
-  c.flag [:t, :title], :desc => 'Title'
-  c.action do |global_options, options, args|
-    video_id = FBCLI::publish_video options['to'], args[0], options['video'], options['title']
-    puts "Your post: #{link video_id}"
-    puts "Edit your video: #{link "video/edit/?v=#{video_id}"}"
-    puts
-    puts "It might take a few minutes for your video to become available."
-  end
-end
-
-desc "Post a link " + TO_COMMAND_DESC
-arg_name "url"
-command :postlink do |c|
-  c.flag [:to], :desc => TO_FLAG_DESC, :default_value => 'me'
-  c.flag [:m, :message], :desc => 'Main message'
-  c.flag [:n, :name], :desc => 'Link name'
-  c.flag [:d, :description], :desc => 'Link description'
-  c.flag [:c, :caption], :desc => 'Link caption'
-  c.flag [:i, :image], :desc => 'Link image URL'
-  c.action do |global_options, options, args|
-    link_metadata = {
-      "name" => options['name'],
-      "link" => args[0],
-      "caption" => options['caption'],
-      "description" => options['description'],
-      "picture" => options['image']
-    }
-
-    full_post_id = FBCLI::publish_post options['to'], options['message'], link_metadata
-
-    puts "Your post: #{link_to_post full_post_id}"
-  end
-end
-
 desc "List pages you have 'Liked'"
 command :likes do |c|
   c.action do
@@ -378,23 +315,7 @@ command :likes do |c|
   end
 end
 
-desc "List people you are friends with (some limitations)"
-long_desc %(
-  As of Graph API v2.0 Facebook no longer provides access to your full friends list.
-  As an alternative, we now request 'taggable_friends' which only includes friends
-  you are allowed to tag.
-
-  See: https://developers.facebook.com/docs/apps/faq#faq_1694316010830088
-)
-command :friends do |c|
-  c.action do
-    FBCLI::page_items 'taggable_friends' do |item|
-      puts item['name']
-    end
-  end
-end
-
-desc "List posts on your profile"
+desc "List posts on your timeline"
 command :feed do |c|
   c.action do
     FBCLI::page_items "feed", '- - -' do |item|
@@ -402,23 +323,6 @@ command :feed do |c|
       puts
       puts link_to_post item["id"]
       puts "Created: #{date_str(item["created_time"])}"
-    end
-  end
-end
-
-desc "List stories you are tagged in"
-command :tagged do |c|
-  c.switch [:date], :desc => 'Include date you were tagged on'
-  c.action do |global_options, options|
-    FBCLI::page_items 'tagged', '- - -' do |item|
-      if item["story"]
-        puts "### #{item["story"]}"
-        puts
-      end
-      puts item["message"] if item.has_key?("message")
-      puts
-      puts link_to_post item["id"]
-      puts "Tagged on: #{date_str(item["tagged_time"])}" if options['date']
     end
   end
 end
@@ -460,88 +364,6 @@ desc "List videos you are tagged in"
 command :videosof do |c|
   c.action do
     FBCLI::page_items "videos", '- - -', &handleVideo
-  end
-end
-
-def list_events(past = false)
-  now = Time.new
-
-  filter = lambda { |item|
-    starts = Time.parse(item['start_time'])
-    not ((past and starts < now) ^ (not past and starts > now))
-  }
-
-  FBCLI::page_items "events", '- - -', filter do |item|
-    starts = Time.parse(item['start_time'])
-
-    unless item['end_time'].nil?
-      ends = Time.parse(item['end_time'])
-      duration = ends - starts
-    end
-
-    puts "#{item['name']} (#{item['id']})"
-    puts
-    puts "Location: #{item['place']['name']}" unless item['place'].nil?
-    puts "Date: #{date_str(item['start_time'])}"
-    puts "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
-    puts "RSVP: #{item['rsvp_status'].sub(/unsure/, 'maybe')}"
-    puts
-    puts link "events/#{item['id']}"
-  end
-end
-
-desc "List your upcoming events"
-command :events do |c|
-  c.action do
-    list_events
-  end
-end
-
-desc "List your past events"
-command :pastevents do |c|
-  c.action do
-    list_events true
-  end
-end
-
-desc "Show event details"
-arg_name "[ids...]"
-command :event do |c|
-  c.action do |global_options, options, args|
-    args.each_with_index do |id, index|
-      FBCLI::request_object(
-        id,
-        :fields => 'name,description,place,owner,start_time,end_time,attending_count,declined_count,maybe_count,is_canceled'
-      ) do |item|
-        starts = Time.parse(item['start_time'])
-
-        unless item['end_time'].nil?
-          ends = Time.parse(item['end_time'])
-          duration = ends - starts
-        end
-
-        puts "#{item['name']} (#{item['id']})"
-
-        puts
-        puts "Location: #{item['place']['name']}" unless item['place'].nil?
-        puts "Date: #{date_str(item['start_time'])}" + (item['is_canceled'] ? " [CANCELED]" : "")
-        puts "Duration: #{duration / 3600} hours" if defined?(duration) and not duration.nil?
-        puts "Created by: #{item['owner']['name']}"
-        puts
-        puts "Attending: #{item['attending_count']}"
-        puts "Maybe: #{item['maybe_count']}"
-        puts "Declined: #{item['declined_count']}"
-        puts
-        puts link "events/#{item['id']}"
-
-        if not (item['description'].nil? || item['description'].empty?)
-          puts
-          puts item['description']
-        end
-
-        puts "- - -" unless index == args.size - 1
-      end
-    end
   end
 end
 

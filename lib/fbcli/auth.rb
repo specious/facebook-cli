@@ -12,7 +12,7 @@ module FBCLI
 
     uri = "https://www.facebook.com/dialog/oauth?client_id=#{app_id}" +
       "&redirect_uri=#{redirect_uri}" +
-      "&scope=user_likes,user_friends,user_posts,user_photos,user_videos,user_events"
+      "&scope=user_likes,user_posts,user_photos,user_videos"
 
     puts <<-EOM
 Open this URL in a web browser and allow access to the Facebook Graph on behalf of your user account:

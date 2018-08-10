@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    facebook-cli (1.7.0)
+    facebook-cli (1.7.1)
       gli (~> 2.14)
       json (~> 2.0)
       jsonpath (~> 0.5)

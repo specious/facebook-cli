@@ -51,25 +51,17 @@ Running `facebook-cli` or `facebook-cli help` shows the list of available comman
 
 ```
 COMMANDS
-    api        - Make a Facebook API request
+    api        - Make a direct Facebook API request
     config     - Save your Facebook API credentials
-    event      - Show event details
-    events     - List your upcoming events
-    feed       - List posts on your profile
-    friends    - List people you are friends with (some limitations)
+    feed       - List posts on your timeline
     help       - Shows a list of commands or help for one command
     likes      - List pages you have 'Liked'
     links      - Some useful URLs
     login      - Request Facebook permissions and receive an API access token
     logout     - Deauthorize your access token
     me         - Show your profile information
-    pastevents - List your past events
     photos     - List photos you have uploaded
     photosof   - List photos you are tagged in
-    post       - Post a message or image to your timeline, a page or a group
-    postlink   - Post a link to your timeline, a page or a group
-    postvideo  - Post a video to your timeline, a page or a group
-    tagged     - List stories you are tagged in
     videos     - List videos you have uploaded
     videosof   - List videos you are tagged in
 ```
@@ -112,9 +104,11 @@ An [article](https://developers.facebook.com/blog/post/2012/10/10/growing-qualit
 
 > Post to friends wall via the API generate a high levels of negative user feedback, including “Hides” and “Mark as Spam" and so we are removing it from the API. If you want to allow people to post to their friend’s timeline from your app, you can invoke the feed dialog.
 
+More recent changes [outlined](https://developers.facebook.com/docs/graph-api/changelog/breaking-changes) on Facebook's developer portal cover further massive deprecations enactedin 2018, which have eliminated facebook-cli's ability to access past and upcoming events, publish content and retrieve names of taggable friends, as was still possible with the previous long-standing restriction.  facebook-cli's available functions have been pruned to reflect the latest changes.
+
 The functionality removed renders it impossible to build a full-featured interface to Facebook through the Graph API alone.
 
-If you expand the functionality, please [open a pull request](https://github.com/specious/facebook-cli/pulls).
+If you expand the functionality of facebook-cli in any way, please [open a pull request](https://github.com/specious/facebook-cli/pulls).
 
 ## Development
 

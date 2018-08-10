@@ -93,28 +93,4 @@ Run: #{APP_NAME} login
       items = items.next_page
     end
   end
-
-  def self.publish_post(target, msg, link_metadata = {})
-    result = api_call lambda { |api|
-      api.put_wall_post(msg, link_metadata, target)
-    }
-
-    result['id']
-  end
-
-  def self.publish_image(target, msg, image_file_or_url)
-    result = api_call lambda { |api|
-      api.put_picture(image_file_or_url, {:message => msg}, target)
-    }
-
-    result['post_id']
-  end
-
-  def self.publish_video(target, msg, video_file_or_url, title = nil)
-    result = api_call lambda { |api|
-      api.put_video(video_file_or_url, {:title => title, :description => msg}, target)
-    }
-
-    result['id']
-  end
 end
