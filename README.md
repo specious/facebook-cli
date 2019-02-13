@@ -122,7 +122,7 @@ bundle install
 You should now be able to run *facebook-cli* from the `bin` directory:
 
 ```
-bin/facebook-cli
+bundle exec bin/facebook-cli
 ```
 
 *facebook-cli* depends on the [Koala](https://github.com/arsduo/koala) library for interfacing with Facebook's Graph API and [GLI](https://github.com/davetron5000/gli) for parsing command line arguments.
