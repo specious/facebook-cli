@@ -131,13 +131,14 @@ Using a ruby environment manager such as [rbenv](https://github.com/rbenv/rbenv)
 
 If you'd like to contribute, please take a brief look at the [guide](CONTRIBUTING.md).
 
-## Facebook client software in the open source community
+## Other Facebook client software in the open source community
 
 Applications:
 
 - [vhpoet/facebook-cli](https://github.com/vhpoet/facebook-cli) (Facebook CLI written in NodeJS)
 - [fb-messenger-cli](https://github.com/Alex-Rose/fb-messenger-cli) (Facebook Messenger for the terminal)
-- [Messenger for Desktop](https://github.com/Aluxian/Messenger-for-Desktop) (Facebook Messenger standalone app)
+- [Caprine](https://github.com/sindresorhus/caprine) (Facebook Messenger standalone GUI)
+- [Messenger for Desktop](https://github.com/Aluxian/Messenger-for-Desktop) (Facebook Messenger standalone GUI - currently unmaintained)
 
 Libraries:
 
