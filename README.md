@@ -129,7 +129,7 @@ bundle exec bin/facebook-cli
 
 Using a ruby environment manager such as [rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io) is advisable to avoid environment conflicts between projects.
 
-Please read the guide on [how to contribute](CONTRIBUTING.md).
+If you'd like to contribute, please take a brief look at the [guide](CONTRIBUTING.md).
 
 ## Facebook client software in the open source community
 
