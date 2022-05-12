@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency "json", "~> 2.0"
   s.add_dependency "jsonpath", "~> 0.5"
   s.add_dependency "gli", "~> 2.14"
+  s.add_dependency "webrick", "~> 1.3"
 end

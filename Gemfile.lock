@@ -1,32 +1,58 @@
 PATH
   remote: .
   specs:
-    facebook-cli (1.7.1)
+    facebook-cli (1.7.2)
       gli (~> 2.14)
       json (~> 2.0)
       jsonpath (~> 0.5)
       koala (~> 3.0)
+      webrick (~> 1.3)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.2)
-      public_suffix (>= 2.0.2, < 4.0)
-    faraday (0.15.2)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
+    faraday (1.10.0)
+      faraday-em_http (~> 1.0)
+      faraday-em_synchrony (~> 1.0)
+      faraday-excon (~> 1.1)
+      faraday-httpclient (~> 1.0)
+      faraday-multipart (~> 1.0)
+      faraday-net_http (~> 1.0)
+      faraday-net_http_persistent (~> 1.0)
+      faraday-patron (~> 1.0)
+      faraday-rack (~> 1.0)
+      faraday-retry (~> 1.0)
+      ruby2_keywords (>= 0.0.4)
+    faraday-em_http (1.0.0)
+    faraday-em_synchrony (1.0.0)
+    faraday-excon (1.1.0)
+    faraday-httpclient (1.0.1)
+    faraday-multipart (1.0.3)
       multipart-post (>= 1.2, < 3)
-    gli (2.17.1)
-    json (2.1.0)
-    jsonpath (0.9.3)
+    faraday-net_http (1.0.1)
+    faraday-net_http_persistent (1.2.0)
+    faraday-patron (1.0.0)
+    faraday-rack (1.0.0)
+    faraday-retry (1.0.3)
+    gli (2.21.0)
+    json (2.6.1)
+    jsonpath (0.9.9)
       multi_json
       to_regexp (~> 0.2.1)
-    koala (3.0.0)
+    koala (3.1.0)
       addressable
-      faraday
+      faraday (< 2)
       json (>= 1.8)
-    multi_json (1.13.1)
-    multipart-post (2.0.0)
-    public_suffix (3.0.2)
+      rexml
+    multi_json (1.15.0)
+    multipart-post (2.1.1)
+    public_suffix (4.0.7)
+    rexml (3.2.5)
+    ruby2_keywords (0.0.5)
     to_regexp (0.2.1)
+    webrick (1.7.0)
 
 PLATFORMS
   ruby
